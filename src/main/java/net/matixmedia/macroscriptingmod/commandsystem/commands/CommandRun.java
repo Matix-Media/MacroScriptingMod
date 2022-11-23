@@ -3,43 +3,42 @@ package net.matixmedia.macroscriptingmod.commandsystem.commands;
 import net.matixmedia.macroscriptingmod.commandsystem.Command;
 import net.matixmedia.macroscriptingmod.scripting.Runtime;
 import net.matixmedia.macroscriptingmod.scripting.Script;
+import net.matixmedia.macroscriptingmod.scripting.ScriptManager;
 import net.matixmedia.macroscriptingmod.utils.Chat;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
-public class CommandEval extends Command {
-
+public class CommandRun extends Command {
     private Runtime runtime;
+    private ScriptManager scriptManager;
 
-    public CommandEval(Runtime runtime) {
+    public CommandRun(Runtime runtime, ScriptManager scriptManager) {
         this.runtime = runtime;
+        this.scriptManager = scriptManager;
     }
 
     @Override
     public boolean execute(String[] args) {
-        if (args.length < 1) return false;
-        String code = String.join(" ", args);
+        String scriptName = String.join(" ", args);
 
-        Chat.sendClientSystemMessage("Evaluating lua code...");
-        //Chat.sendClientSystemMessage(code);
+        Script script = this.scriptManager.loadScript(scriptName);
         try {
-            this.runtime.execute(new Script(code));
+            this.runtime.execute(script);
         } catch (IOException e) {
-            Chat.sendClientSystemMessage(Chat.Color.RED + "Error evaluating lua code: " + e.getMessage());
+            Chat.sendClientSystemMessage(Chat.Color.RED + "Error executing lua script: " + e.getMessage());
         }
-
         return true;
     }
 
     @Override
     public @NotNull String getCommand() {
-        return "eval";
+        return "run";
     }
 
     @Override
     public @Nullable String getHelp() {
-        return "<code>";
+        return "<script name>";
     }
 }

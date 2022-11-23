@@ -5,7 +5,10 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.api.ModInitializer;
 import net.matixmedia.macroscriptingmod.commandsystem.CommandManager;
 import net.matixmedia.macroscriptingmod.commandsystem.commands.CommandEval;
+import net.matixmedia.macroscriptingmod.commandsystem.commands.CommandRun;
 import net.matixmedia.macroscriptingmod.exceptions.InitializationException;
+import net.matixmedia.macroscriptingmod.scripting.Runtime;
+import net.matixmedia.macroscriptingmod.scripting.ScriptManager;
 import net.matixmedia.macroscriptingmod.utils.Chat;
 import net.minecraft.client.MinecraftClient;
 import org.apache.logging.log4j.LogManager;
@@ -24,15 +27,14 @@ public class MacroScriptingMod implements ModInitializer {
     }
 
     private CommandManager commandManager;
+    private ScriptManager scriptManager;
     private Path scriptsDir;
     private Globals luaGlobals;
-
+    private Runtime runtime;
 
     @Override
     public void onInitialize() {
         LOGGER.info("Initializing");
-
-        this.registerCommands();
 
         LOGGER.info("Checking scripts directory");
         scriptsDir = MinecraftClient.getInstance().runDirectory.toPath().normalize().resolve("scripts");
@@ -41,6 +43,13 @@ public class MacroScriptingMod implements ModInitializer {
         } catch (IOException exception) {
             throw new InitializationException("Could not create scripts directory", exception);
         }
+
+        this.scriptManager = new ScriptManager(this.scriptsDir);
+
+        this.runtime = new Runtime();
+        this.registerCommands();
+
+
     }
 
     private void registerCommands() {
@@ -48,6 +57,7 @@ public class MacroScriptingMod implements ModInitializer {
 
         this.commandManager = new CommandManager();
 
-        this.commandManager.registerCommand(new CommandEval());
+        this.commandManager.registerCommand(new CommandEval(this.runtime));
+        this.commandManager.registerCommand(new CommandRun(this.runtime, this.scriptManager));
     }
 }
