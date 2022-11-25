@@ -4,7 +4,6 @@ import net.matixmedia.macroscriptingmod.api.scripting.Lib;
 import net.matixmedia.macroscriptingmod.api.scripting.objects.ObjLocation;
 import net.minecraft.client.MinecraftClient;
 import org.luaj.vm2.LuaValue;
-import org.luaj.vm2.lib.TwoArgFunction;
 import org.luaj.vm2.lib.ZeroArgFunction;
 
 public class LibPlayer extends Lib {
