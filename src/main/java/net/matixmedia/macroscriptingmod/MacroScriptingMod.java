@@ -10,6 +10,7 @@ import net.matixmedia.macroscriptingmod.exceptions.InitializationException;
 import net.matixmedia.macroscriptingmod.scripting.Runtime;
 import net.matixmedia.macroscriptingmod.scripting.ScriptManager;
 import net.matixmedia.macroscriptingmod.scripting.libs.LibPlayer;
+import net.matixmedia.macroscriptingmod.scripting.libs.LibWorld;
 import net.matixmedia.macroscriptingmod.utils.Chat;
 import net.minecraft.client.MinecraftClient;
 import org.apache.logging.log4j.LogManager;
@@ -62,6 +63,7 @@ public class MacroScriptingMod implements ModInitializer {
         this.runtime.addLibrary(new JseOsLib());
 
         this.runtime.addLibrary(new LibPlayer());
+        this.runtime.addLibrary(new LibWorld());
 
         this.runtime.init();
 
