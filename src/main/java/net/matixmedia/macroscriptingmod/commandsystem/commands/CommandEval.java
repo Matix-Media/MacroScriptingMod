@@ -6,6 +6,7 @@ import net.matixmedia.macroscriptingmod.scripting.Script;
 import net.matixmedia.macroscriptingmod.utils.Chat;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.luaj.vm2.LuaError;
 
 import java.io.IOException;
 
@@ -26,7 +27,7 @@ public class CommandEval extends Command {
         //Chat.sendClientSystemMessage(code);
         try {
             this.runtime.execute(new Script(code));
-        } catch (IOException e) {
+        } catch (IOException | LuaError e) {
             Chat.sendClientSystemMessage(Chat.Color.RED + "Error evaluating lua code: " + e.getMessage());
         }
 

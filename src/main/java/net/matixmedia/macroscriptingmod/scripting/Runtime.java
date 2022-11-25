@@ -1,5 +1,6 @@
 package net.matixmedia.macroscriptingmod.scripting;
 
+import net.matixmedia.macroscriptingmod.exceptions.InitializationException;
 import net.matixmedia.macroscriptingmod.utils.Chat;
 import net.matixmedia.macroscriptingmod.utils.RealTimeOutputStream;
 import org.apache.commons.io.output.WriterOutputStream;
@@ -9,41 +10,38 @@ import org.luaj.vm2.Globals;
 import org.luaj.vm2.LoadState;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.compiler.LuaC;
-import org.luaj.vm2.lib.CoroutineLib;
-import org.luaj.vm2.lib.PackageLib;
-import org.luaj.vm2.lib.StringLib;
-import org.luaj.vm2.lib.TableLib;
+import org.luaj.vm2.lib.*;
 import org.luaj.vm2.lib.jse.*;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Runtime {
     private static final Logger LOGGER = LogManager.getLogger("MacroScripting/Runtime");
 
     private final Globals globals;
+    private boolean initialized = false;
 
     public Runtime() {
-        globals = this.createGlobals();
+        this.globals = new Globals();
+        RealTimeOutputStream outputStream = new RealTimeOutputStream(Chat::sendClientMessage);
+        globals.STDOUT = new PrintStream(outputStream, true, StandardCharsets.US_ASCII);
     }
 
-    public Globals createGlobals() {
-        Globals globals = new Globals();
-        globals.load(new JseBaseLib());
-        globals.load(new PackageLib());
-        globals.load(new TableLib());
-        globals.load(new StringLib());
-        globals.load(new JseMathLib());
-        globals.load(new CoroutineLib());
-        globals.load(new JseIoLib());
-        globals.load(new JseOsLib());
-        LoadState.install(globals);
-        LuaC.install(globals);
+    public void addLibrary(LibFunction lib) {
+        if (this.initialized) throw new InitializationException("Cannot add libraries after initialization");
 
-        // Redirect console
-        RealTimeOutputStream outputStream = new RealTimeOutputStream(Chat::sendClientMessage);
-        globals.STDOUT = new PrintStream(outputStream, true);
+        this.globals.load(lib);
+    }
 
-        return globals;
+    public void init() {
+        if (this.initialized) throw new InitializationException("Already initialized");
+
+        LoadState.install(this.globals);
+        LuaC.install(this.globals);
     }
 
     public LuaValue execute(Script script) throws IOException {

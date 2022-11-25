@@ -9,11 +9,14 @@ import net.matixmedia.macroscriptingmod.commandsystem.commands.CommandRun;
 import net.matixmedia.macroscriptingmod.exceptions.InitializationException;
 import net.matixmedia.macroscriptingmod.scripting.Runtime;
 import net.matixmedia.macroscriptingmod.scripting.ScriptManager;
+import net.matixmedia.macroscriptingmod.scripting.libs.LibPlayer;
 import net.matixmedia.macroscriptingmod.utils.Chat;
 import net.minecraft.client.MinecraftClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.luaj.vm2.Globals;
+import org.luaj.vm2.lib.*;
+import org.luaj.vm2.lib.jse.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -47,9 +50,22 @@ public class MacroScriptingMod implements ModInitializer {
         this.scriptManager = new ScriptManager(this.scriptsDir);
 
         this.runtime = new Runtime();
+
+        this.runtime.addLibrary(new JseBaseLib());
+        this.runtime.addLibrary(new PackageLib());
+        this.runtime.addLibrary(new StringLib());
+        this.runtime.addLibrary(new TableLib());
+        this.runtime.addLibrary(new JseMathLib());
+        this.runtime.addLibrary(new Bit32Lib());
+        this.runtime.addLibrary(new CoroutineLib());
+        this.runtime.addLibrary(new JseIoLib());
+        this.runtime.addLibrary(new JseOsLib());
+
+        this.runtime.addLibrary(new LibPlayer());
+
+        this.runtime.init();
+
         this.registerCommands();
-
-
     }
 
     private void registerCommands() {

@@ -25,6 +25,7 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
     implementation "org.luaj:luaj-jse:3.0.1"
+    implementation 'com.google.guava:guava:31.1-jre'
 }
 
 processResources {

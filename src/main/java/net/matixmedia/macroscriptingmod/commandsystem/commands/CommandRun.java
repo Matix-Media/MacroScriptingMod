@@ -7,6 +7,7 @@ import net.matixmedia.macroscriptingmod.scripting.ScriptManager;
 import net.matixmedia.macroscriptingmod.utils.Chat;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.luaj.vm2.LuaError;
 
 import java.io.IOException;
 
@@ -26,7 +27,7 @@ public class CommandRun extends Command {
         Script script = this.scriptManager.loadScript(scriptName);
         try {
             this.runtime.execute(script);
-        } catch (IOException e) {
+        } catch (IOException | LuaError e) {
             Chat.sendClientSystemMessage(Chat.Color.RED + "Error executing lua script: " + e.getMessage());
         }
         return true;
