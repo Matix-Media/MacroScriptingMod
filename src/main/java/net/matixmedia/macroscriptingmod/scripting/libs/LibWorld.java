@@ -2,14 +2,11 @@ package net.matixmedia.macroscriptingmod.scripting.libs;
 
 import net.matixmedia.macroscriptingmod.api.scripting.Lib;
 import net.matixmedia.macroscriptingmod.api.scripting.objects.ObjBlock;
-import net.matixmedia.macroscriptingmod.api.scripting.objects.ObjLocation;
 import net.minecraft.block.Block;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.ThreeArgFunction;
-import org.luaj.vm2.lib.ZeroArgFunction;
 
 public class LibWorld extends Lib {
 
@@ -35,7 +32,7 @@ public class LibWorld extends Lib {
         }
     }
 
-    public static class GetBlocKRel extends ThreeArgFunction {
+    public static class GetBlockRel extends ThreeArgFunction {
         @Override
         public LuaValue call(LuaValue x, LuaValue y, LuaValue z) {
             MinecraftClient mc = MinecraftClient.getInstance();
