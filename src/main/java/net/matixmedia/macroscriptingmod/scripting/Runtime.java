@@ -18,6 +18,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class Runtime {
     private static final Logger LOGGER = LogManager.getLogger("MacroScripting/Runtime");
@@ -44,9 +45,16 @@ public class Runtime {
         LuaC.install(this.globals);
     }
 
-    public LuaValue execute(Script script) throws IOException {
-        LuaValue chunk = this.loadScript(script);
-        return chunk.call();
+    public CompletableFuture<LuaValue> execute(Script script) throws IOException {
+        return CompletableFuture.supplyAsync(() -> {
+            LuaValue chunk = null;
+            try {
+                chunk = this.loadScript(script);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            return chunk.call();
+        });
     }
 
     private LuaValue loadScript(Script script) throws IOException {

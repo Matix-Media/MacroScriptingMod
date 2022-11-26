@@ -27,7 +27,7 @@ public class CommandEval extends Command {
         //Chat.sendClientSystemMessage(code);
         try {
             this.runtime.execute(new Script(code));
-        } catch (IOException | LuaError e) {
+        } catch (IOException | RuntimeException e) {
             Chat.sendClientSystemMessage(Chat.Color.RED + "Error evaluating lua code: " + e.getMessage());
         }
 
