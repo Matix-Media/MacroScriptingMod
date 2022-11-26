@@ -4,7 +4,8 @@
   "package": "net.matixmedia.macroscriptingmod.mixins",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "ClientPlayerEntityMixin"
+    "MixinClientPlayerEntity",
+    "AccessorKeyBinding"
   ],
   "client": [
   ],

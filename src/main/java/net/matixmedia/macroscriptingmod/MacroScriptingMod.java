@@ -9,6 +9,7 @@ import net.matixmedia.macroscriptingmod.commandsystem.commands.CommandRun;
 import net.matixmedia.macroscriptingmod.exceptions.InitializationException;
 import net.matixmedia.macroscriptingmod.scripting.Runtime;
 import net.matixmedia.macroscriptingmod.scripting.ScriptManager;
+import net.matixmedia.macroscriptingmod.scripting.libs.LibInput;
 import net.matixmedia.macroscriptingmod.scripting.libs.LibPlayer;
 import net.matixmedia.macroscriptingmod.scripting.libs.LibWorld;
 import net.matixmedia.macroscriptingmod.utils.Chat;
@@ -64,6 +65,7 @@ public class MacroScriptingMod implements ModInitializer {
 
         this.runtime.addLibrary(new LibPlayer());
         this.runtime.addLibrary(new LibWorld());
+        this.runtime.addLibrary(new LibInput());
 
         this.runtime.init();
 

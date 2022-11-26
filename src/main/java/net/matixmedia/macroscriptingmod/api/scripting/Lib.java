@@ -11,7 +11,6 @@ import org.luaj.vm2.lib.TwoArgFunction;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public abstract class Lib extends TwoArgFunction {
