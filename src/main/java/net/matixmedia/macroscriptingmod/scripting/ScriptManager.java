@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ScriptManager {
-    private Map<String, Script> scripts = new HashMap<>();
-    private Path scriptsDir;
+    private final Map<String, Script> scripts = new HashMap<>();
+    private final Path scriptsDir;
 
     public ScriptManager(Path scriptsDir) {
         this.scriptsDir = scriptsDir;

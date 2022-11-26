@@ -3,7 +3,7 @@ package net.matixmedia.macroscriptingmod.mixins;
 import com.mojang.authlib.GameProfile;
 import net.matixmedia.macroscriptingmod.eventsystem.EventManager;
 import net.matixmedia.macroscriptingmod.eventsystem.events.EventChatMessage;
-import net.matixmedia.macroscriptingmod.eventsystem.events.TickEvent;
+import net.matixmedia.macroscriptingmod.eventsystem.events.EventTick;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -61,6 +61,6 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
 
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/AbstractClientPlayerEntity;tick()V", ordinal = 0), method = "tick()V")
     public void onTick(CallbackInfo cb) {
-        EventManager.fire(new TickEvent());
+        EventManager.fire(new EventTick());
     }
 }
