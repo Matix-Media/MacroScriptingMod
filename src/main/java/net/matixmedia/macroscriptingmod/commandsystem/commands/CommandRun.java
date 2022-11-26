@@ -5,6 +5,7 @@ import net.matixmedia.macroscriptingmod.scripting.Runtime;
 import net.matixmedia.macroscriptingmod.scripting.Script;
 import net.matixmedia.macroscriptingmod.scripting.ScriptManager;
 import net.matixmedia.macroscriptingmod.utils.Chat;
+import org.checkerframework.checker.units.qual.C;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.luaj.vm2.LuaError;
@@ -25,6 +26,10 @@ public class CommandRun extends Command {
         String scriptName = String.join(" ", args);
 
         Script script = this.scriptManager.loadScript(scriptName);
+        if (script == null) {
+            Chat.sendClientSystemMessage(Chat.Color.RED + "Script not found");
+            return true;
+        }
         try {
             this.runtime.execute(script);
         } catch (IOException | LuaError e) {
