@@ -24,4 +24,8 @@ public class Script {
         if (sourcePath == null) return this.scriptContent;
         else return String.join("\n", Files.readAllLines(this.sourcePath.toPath()));
     }
+
+    public File getFile() {
+        return this.sourcePath;
+    }
 }
