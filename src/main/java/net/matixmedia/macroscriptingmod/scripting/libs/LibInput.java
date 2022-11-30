@@ -5,7 +5,6 @@ import net.matixmedia.macroscriptingmod.api.scripting.LibOneArgFunction;
 import net.matixmedia.macroscriptingmod.eventsystem.EventHandler;
 import net.matixmedia.macroscriptingmod.eventsystem.EventListener;
 import net.matixmedia.macroscriptingmod.eventsystem.EventManager;
-import net.matixmedia.macroscriptingmod.eventsystem.events.EventScriptEnd;
 import net.matixmedia.macroscriptingmod.eventsystem.events.EventTick;
 import net.matixmedia.macroscriptingmod.mixins.AccessorKeyBinding;
 import net.matixmedia.macroscriptingmod.scripting.RunningScript;
@@ -42,8 +41,17 @@ public class LibInput extends Lib implements EventListener {
             put("attack", options.attackKey);
             put("use", options.useKey);
         }};
-        KeyBinding key = keyMappings.get(name);
-        if (key != null) return ((AccessorKeyBinding) key).getBoundKey();
+        KeyBinding keyBinding = keyMappings.get(name);
+        if (keyBinding != null) return ((AccessorKeyBinding) keyBinding).getBoundKey();
+
+        InputUtil.Key key = InputUtil.fromTranslationKey(name);
+        if (key == null) key = InputUtil.fromTranslationKey("key.keyboard." + name);
+        if (key == null) key = InputUtil.fromTranslationKey("key." + name);
+        return key;
+    }
+
+    private static InputUtil.Key getKeyFromCode(int keyCode) {
+        if (keyCode > 0 && keyCode < 255) return InputUtil.fromKeyCode(keyCode, -1);
         else return null;
     }
 
@@ -80,12 +88,9 @@ public class LibInput extends Lib implements EventListener {
         public LuaValue call(LuaValue arg) {
             LibInput instance = getInstance(this.getRunningScript());
 
-            InputUtil.Key key = null;
+            InputUtil.Key key;
             if (arg.isstring()) key = LibInput.getKeyFromName(arg.checkjstring());
-            else {
-                int keyCode = arg.checkint();
-                if (keyCode > 0 && keyCode < 255) key = InputUtil.fromKeyCode(keyCode, -1);
-            }
+            else key = LibInput.getKeyFromCode(arg.checkint());
             if (key == null) return null;
 
             for (KeyModifier modifier : instance.keyModifiers) {
@@ -102,12 +107,9 @@ public class LibInput extends Lib implements EventListener {
         public LuaValue call(LuaValue arg) {
             LibInput instance = getInstance(this.getRunningScript());
 
-            InputUtil.Key key = null;
+            InputUtil.Key key;
             if (arg.isstring()) key = LibInput.getKeyFromName(arg.checkjstring());
-            else {
-                int keyCode = arg.checkint();
-                if (keyCode > 0 && keyCode < 255) key = InputUtil.fromKeyCode(keyCode, -1);
-            }
+            else key = LibInput.getKeyFromCode(arg.checkint());
             if (key == null) return null;
 
             for (KeyModifier modifier : instance.keyModifiers) {
@@ -123,12 +125,9 @@ public class LibInput extends Lib implements EventListener {
         public LuaValue call(LuaValue arg) {
             LibInput instance = getInstance(this.getRunningScript());
 
-            InputUtil.Key key = null;
+            InputUtil.Key key;
             if (arg.isstring()) key = LibInput.getKeyFromName(arg.checkjstring());
-            else {
-                int keyCode = arg.checkint();
-                if (keyCode > 0 && keyCode < 255) key = InputUtil.fromKeyCode(keyCode, -1);
-            }
+            else key = LibInput.getKeyFromCode(arg.checkint());
             if (key == null) return null;
 
             instance.keyModifiers.add(new KeyModifier(key, true));
