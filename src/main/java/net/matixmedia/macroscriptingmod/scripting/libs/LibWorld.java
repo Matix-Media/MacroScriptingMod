@@ -32,7 +32,7 @@ public class LibWorld extends Lib {
         }
     }
 
-    public static class GetBlockRel extends ThreeArgFunction {
+    public static class GetBlockRelative extends ThreeArgFunction {
         @Override
         public LuaValue call(LuaValue x, LuaValue y, LuaValue z) {
             MinecraftClient mc = MinecraftClient.getInstance();
