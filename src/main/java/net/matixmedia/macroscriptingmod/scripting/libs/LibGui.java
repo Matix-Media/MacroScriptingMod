@@ -3,6 +3,7 @@ package net.matixmedia.macroscriptingmod.scripting.libs;
 import net.matixmedia.macroscriptingmod.api.scripting.Lib;
 import net.matixmedia.macroscriptingmod.api.scripting.LibOneArgFunction;
 import net.matixmedia.macroscriptingmod.api.scripting.LibZeroArgFunction;
+import net.matixmedia.macroscriptingmod.api.scripting.objects.ObjItem;
 import net.matixmedia.macroscriptingmod.eventsystem.EventHandler;
 import net.matixmedia.macroscriptingmod.eventsystem.EventListener;
 import net.matixmedia.macroscriptingmod.eventsystem.EventManager;
@@ -228,6 +229,18 @@ public class LibGui extends Lib implements EventListener {
             }
 
             return NIL;
+        }
+    }
+
+    public static class GetItem extends LibOneArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg) {
+            MinecraftClient mc = MinecraftClient.getInstance();
+            if (!(mc.currentScreen instanceof GenericContainerScreen)) return NIL;
+            int slot = arg.checkint();
+            Inventory inventory = ((GenericContainerScreen) mc.currentScreen).getScreenHandler().getInventory();
+
+            return new ObjItem(inventory.getStack(slot)).toLua();
         }
     }
 }
