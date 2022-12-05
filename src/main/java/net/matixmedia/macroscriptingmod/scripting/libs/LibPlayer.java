@@ -1,5 +1,6 @@
 package net.matixmedia.macroscriptingmod.scripting.libs;
 
+import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.matixmedia.macroscriptingmod.api.scripting.Lib;
 import net.matixmedia.macroscriptingmod.api.scripting.LibZeroArgFunction;
@@ -46,6 +47,96 @@ public class LibPlayer extends Lib {
             if (networkPlayer == null || networkPlayer.getGameMode() == null) return NIL;
 
             return new ObjGameMode(networkPlayer.getGameMode()).toLua();
+        }
+    }
+
+    public static class GetUsername extends LibZeroArgFunction {
+        @Override
+        public LuaValue call() {
+            if (this.getMinecraft().player == null) return NIL;
+
+            return LuaValue.valueOf(this.getMinecraft().player.getGameProfile().getName());
+        }
+    }
+
+    public static class GetUuid extends LibZeroArgFunction {
+        @Override
+        public LuaValue call() {
+            if (this.getMinecraft().player == null) return NIL;
+
+            return LuaValue.valueOf(this.getMinecraft().player.getGameProfile().getId().toString());
+        }
+    }
+
+    public static class GetHealth extends LibZeroArgFunction {
+        @Override
+        public LuaValue call() {
+            if (this.getMinecraft().player == null) return NIL;
+
+            return LuaValue.valueOf(this.getMinecraft().player.getHealth());
+        }
+    }
+
+    public static class GetHunger extends LibZeroArgFunction {
+        @Override
+        public LuaValue call() {
+            if (this.getMinecraft().player == null) return NIL;
+
+            return LuaValue.valueOf(this.getMinecraft().player.getHungerManager().getFoodLevel());
+        }
+    }
+
+    public static class GetXpLevel extends LibZeroArgFunction {
+        @Override
+        public LuaValue call() {
+            if (this.getMinecraft().player == null) return NIL;
+
+            return LuaValue.valueOf(this.getMinecraft().player.experienceLevel);
+        }
+    }
+
+    public static class GetXp extends LibZeroArgFunction {
+        @Override
+        public LuaValue call() {
+            if (this.getMinecraft().player == null) return NIL;
+
+            return LuaValue.valueOf((int)(this.getMinecraft().player.experienceProgress * (float)this.getMinecraft().player.getNextLevelExperience()));
+        }
+    }
+
+    public static class GetTotalXp extends LibZeroArgFunction {
+        @Override
+        public LuaValue call() {
+            if (this.getMinecraft().player == null) return NIL;
+
+            return LuaValue.valueOf(this.getMinecraft().player.totalExperience);
+        }
+    }
+
+    public static class GetOxygen extends LibZeroArgFunction {
+        @Override
+        public LuaValue call() {
+            if (this.getMinecraft().player == null) return NIL;
+
+            return LuaValue.valueOf(this.getMinecraft().player.getAir());
+        }
+    }
+
+    public static class IsFlying extends LibZeroArgFunction {
+        @Override
+        public LuaValue call() {
+            if (this.getMinecraft().player == null) return NIL;
+
+            return LuaValue.valueOf(this.getMinecraft().player.getAbilities().flying);
+        }
+    }
+
+    public static class CanFly extends LibZeroArgFunction {
+        @Override
+        public LuaValue call() {
+            if (this.getMinecraft().player == null) return NIL;
+
+            return LuaValue.valueOf(this.getMinecraft().player.getAbilities().allowFlying);
         }
     }
 }
