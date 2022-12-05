@@ -20,11 +20,6 @@ import java.util.*;
 
 public class LibInput extends Lib implements EventListener {
     private static final Logger LOGGER = LogManager.getLogger("MacroScripting/Lib/Input");
-    private static final Map<RunningScript, LibInput> INSTANCES = new HashMap<>();
-
-    private static LibInput getInstance(RunningScript runningScript) {
-        return INSTANCES.get(runningScript);
-    }
 
     private static InputUtil.Key getKeyFromName(String name) {
         GameOptions options = MinecraftClient.getInstance().options;
@@ -67,16 +62,9 @@ public class LibInput extends Lib implements EventListener {
     }
 
     @Override
-    public LuaValue call(LuaValue modName, LuaValue env) {
-        LuaValue result = super.call(modName, env);
-        INSTANCES.put(this.getRunningScript(), this);
-        return result;
-    }
-
-    @Override
     public void dispose() {
+        super.dispose();
         EventManager.unregisterListener(this);
-        INSTANCES.remove(this.getRunningScript());
 
         for (KeyModifier modifier : this.keyModifiers) {
             KeyBinding.setKeyPressed(modifier.key, false);
@@ -86,7 +74,8 @@ public class LibInput extends Lib implements EventListener {
     public static class KeyDown extends LibOneArgFunction {
         @Override
         public LuaValue call(LuaValue arg) {
-            LibInput instance = getInstance(this.getRunningScript());
+            LibInput instance = (LibInput) getInstance(LibInput.class, this.getRunningScript());
+            if (instance == null) return null;
 
             InputUtil.Key key;
             if (arg.isstring()) key = LibInput.getKeyFromName(arg.checkjstring());
@@ -105,7 +94,8 @@ public class LibInput extends Lib implements EventListener {
     public static class KeyUp extends LibOneArgFunction {
         @Override
         public LuaValue call(LuaValue arg) {
-            LibInput instance = getInstance(this.getRunningScript());
+            LibInput instance = (LibInput) getInstance(LibInput.class, this.getRunningScript());
+            if (instance == null) return null;
 
             InputUtil.Key key;
             if (arg.isstring()) key = LibInput.getKeyFromName(arg.checkjstring());
@@ -123,7 +113,8 @@ public class LibInput extends Lib implements EventListener {
     public static class PressKey extends LibOneArgFunction {
         @Override
         public LuaValue call(LuaValue arg) {
-            LibInput instance = getInstance(this.getRunningScript());
+            LibInput instance = (LibInput) getInstance(LibInput.class, this.getRunningScript());
+            if (instance == null) return null;
 
             InputUtil.Key key;
             if (arg.isstring()) key = LibInput.getKeyFromName(arg.checkjstring());

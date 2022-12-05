@@ -91,10 +91,6 @@ public class LibGui extends Lib implements EventListener {
         put(InventoryScreen.class, "inventory");
         put(CreativeInventoryScreen.class, "creative_inventory");
     }};
-    private static final Map<RunningScript, LibGui> INSTANCES = new HashMap<>();
-    private static LibGui getInstance(RunningScript runningScript) {
-        return INSTANCES.get(runningScript);
-    }
 
     private Screen screenToSet;
     private boolean setScreenNull = false;
@@ -108,11 +104,11 @@ public class LibGui extends Lib implements EventListener {
     @Override
     public void init() {
         EventManager.registerListener(this);
-        INSTANCES.put(this.getRunningScript(), this);
     }
 
     @Override
     public void dispose() {
+        super.dispose();
         this.dispose = true;
     }
 
@@ -136,7 +132,6 @@ public class LibGui extends Lib implements EventListener {
 
         if (this.dispose) {
             EventManager.unregisterListener(this);
-            INSTANCES.remove(this.getRunningScript());
             this.disposed = true;
         }
     }
@@ -167,7 +162,7 @@ public class LibGui extends Lib implements EventListener {
     public static class Open extends LibOneArgFunction {
         @Override
         public LuaValue call(LuaValue arg) {
-            LibGui instance = getInstance(this.getRunningScript());
+            LibGui instance = (LibGui) getInstance(LibGui.class, this.getRunningScript());
             if (instance == null) return null;
 
             MinecraftClient mc = MinecraftClient.getInstance();
@@ -195,7 +190,7 @@ public class LibGui extends Lib implements EventListener {
     public static class CloseCurrentGui extends LibZeroArgFunction {
         @Override
         public LuaValue call() {
-            LibGui instance = getInstance(this.getRunningScript());
+            LibGui instance = (LibGui) getInstance(LibGui.class, this.getRunningScript());
             if (instance == null) return null;
 
             MinecraftClient mc = MinecraftClient.getInstance();

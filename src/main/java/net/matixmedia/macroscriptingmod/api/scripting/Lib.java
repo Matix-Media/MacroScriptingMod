@@ -1,6 +1,7 @@
 package net.matixmedia.macroscriptingmod.api.scripting;
 
 import com.google.common.base.CaseFormat;
+import com.sun.jna.platform.win32.COM.TypeLibUtil;
 import net.matixmedia.macroscriptingmod.exceptions.LibTypeException;
 import net.matixmedia.macroscriptingmod.scripting.RunningScript;
 import net.matixmedia.macroscriptingmod.scripting.Script;
@@ -13,12 +14,21 @@ import org.luaj.vm2.lib.TwoArgFunction;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 public abstract class Lib extends TwoArgFunction {
     private static final Logger LOGGER = LogManager.getLogger("MacroScripting/Lib");
-    private static final Pattern CASE_CONVERTER_PATTERN = Pattern.compile("(\\B)([A-Z])", Pattern.MULTILINE);
-    private static final String CASE_CONVERTER_SUBST = "_\\2";
+    private static final Map<Lib, RunningScript> INSTANCES = new HashMap<>();
+
+    protected static Lib getInstance(Class<? extends Lib> type, RunningScript runningScript) {
+        for (Map.Entry<Lib, RunningScript> entry : INSTANCES.entrySet()) {
+            if (entry.getValue() != runningScript) continue;
+            if (type.equals(entry.getKey().getClass())) return entry.getKey();
+        }
+        return null;
+    }
 
     private RunningScript runningScript;
 
@@ -72,6 +82,7 @@ public abstract class Lib extends TwoArgFunction {
         env.set(libraryName, lib);
         env.get("package").get("loaded").set(libraryName, lib);
 
+        INSTANCES.put(this, this.runningScript);
         this.init();
 
         return lib;
@@ -79,5 +90,7 @@ public abstract class Lib extends TwoArgFunction {
 
     public void init() {}
 
-    public void dispose() {}
+    public void dispose() {
+        INSTANCES.remove(this);
+    }
 }
