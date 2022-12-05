@@ -7,12 +7,16 @@ import net.matixmedia.macroscriptingmod.commandsystem.CommandManager;
 import net.matixmedia.macroscriptingmod.commandsystem.commands.CommandEval;
 import net.matixmedia.macroscriptingmod.commandsystem.commands.CommandRun;
 import net.matixmedia.macroscriptingmod.commandsystem.commands.CommandRunning;
+import net.matixmedia.macroscriptingmod.eventsystem.EventHandler;
+import net.matixmedia.macroscriptingmod.eventsystem.EventListener;
+import net.matixmedia.macroscriptingmod.eventsystem.events.EventConnectToServer;
 import net.matixmedia.macroscriptingmod.exceptions.InitializationException;
 import net.matixmedia.macroscriptingmod.scripting.Runtime;
 import net.matixmedia.macroscriptingmod.scripting.ScriptManager;
 import net.matixmedia.macroscriptingmod.scripting.libs.*;
 import net.matixmedia.macroscriptingmod.utils.Chat;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ServerInfo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.luaj.vm2.Globals;
@@ -24,7 +28,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 @Environment(EnvType.CLIENT)
-public class MacroScriptingMod implements ModInitializer {
+public class MacroScriptingMod implements ModInitializer, EventListener {
     private static final Logger LOGGER = LogManager.getLogger("MacroScripting");
     private static MacroScriptingMod INSTANCE;
     public static String getChatPrefix() {
@@ -39,6 +43,7 @@ public class MacroScriptingMod implements ModInitializer {
     private Path scriptsDir;
     private Globals luaGlobals;
     private Runtime runtime;
+    private ServerInfo lastServer;
 
     @Override
     public void onInitialize() {
@@ -86,5 +91,15 @@ public class MacroScriptingMod implements ModInitializer {
         this.runtime.addLibrary(LibInput.class);
         this.runtime.addLibrary(LibTime.class);
         this.runtime.addLibrary(LibGui.class);
+        this.runtime.addLibrary(LibServer.class);
+    }
+
+    @EventHandler
+    public void onConnectToServer(EventConnectToServer event) {
+        this.lastServer = event.getServerInfo();
+    }
+
+    public ServerInfo getLastServer() {
+        return lastServer;
     }
 }
