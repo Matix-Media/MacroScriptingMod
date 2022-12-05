@@ -8,6 +8,7 @@ import net.matixmedia.macroscriptingmod.eventsystem.EventListener;
 import net.matixmedia.macroscriptingmod.eventsystem.EventManager;
 import net.matixmedia.macroscriptingmod.eventsystem.events.EventRender;
 import net.matixmedia.macroscriptingmod.scripting.RunningScript;
+import net.matixmedia.macroscriptingmod.scripting.helpers.ItemSearch;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.*;
 import net.minecraft.client.gui.screen.advancement.AdvancementsScreen;
@@ -19,7 +20,10 @@ import net.minecraft.client.gui.screen.world.CreateWorldScreen;
 import net.minecraft.client.gui.screen.world.EditGameRulesScreen;
 import net.minecraft.client.gui.screen.world.EditWorldScreen;
 import net.minecraft.client.gui.screen.world.OptimizeWorldScreen;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
+import net.minecraft.util.registry.Registry;
 import org.luaj.vm2.LuaValue;
 
 import java.util.HashMap;
@@ -206,6 +210,24 @@ public class LibGui extends Lib implements EventListener {
             }
 
             return null;
+        }
+    }
+
+    public static class FindItem extends LibOneArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg) {
+            MinecraftClient mc = MinecraftClient.getInstance();
+            if (!(mc.currentScreen instanceof GenericContainerScreen)) return NIL;
+
+            ItemSearch search = new ItemSearch(arg.checkjstring());
+            Inventory inventory = ((GenericContainerScreen) mc.currentScreen).getScreenHandler().getInventory();
+
+            for (int i = 0; i < inventory.size(); i++) {
+                ItemStack slot = inventory.getStack(i);
+                if (search.matches(slot)) return LuaValue.valueOf(i);
+            }
+
+            return NIL;
         }
     }
 }
