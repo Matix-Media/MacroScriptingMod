@@ -71,8 +71,13 @@ public abstract class Lib extends TwoArgFunction {
 
         env.set(libraryName, lib);
         env.get("package").get("loaded").set(libraryName, lib);
+
+        this.init();
+
         return lib;
     }
+
+    public void init() {}
 
     public void dispose() {}
 }

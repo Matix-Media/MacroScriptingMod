@@ -4,10 +4,11 @@
   "package": "net.matixmedia.macroscriptingmod.mixins",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "MixinClientPlayerEntity",
-    "AccessorKeyBinding"
   ],
   "client": [
+    "MixinGameRenderer",
+    "AccessorKeyBinding",
+    "MixinClientPlayerEntity"
   ],
   "injectors": {
     "defaultRequire": 1

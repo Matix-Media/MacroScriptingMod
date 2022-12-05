@@ -10,10 +10,7 @@ import net.matixmedia.macroscriptingmod.commandsystem.commands.CommandRunning;
 import net.matixmedia.macroscriptingmod.exceptions.InitializationException;
 import net.matixmedia.macroscriptingmod.scripting.Runtime;
 import net.matixmedia.macroscriptingmod.scripting.ScriptManager;
-import net.matixmedia.macroscriptingmod.scripting.libs.LibInput;
-import net.matixmedia.macroscriptingmod.scripting.libs.LibPlayer;
-import net.matixmedia.macroscriptingmod.scripting.libs.LibTime;
-import net.matixmedia.macroscriptingmod.scripting.libs.LibWorld;
+import net.matixmedia.macroscriptingmod.scripting.libs.*;
 import net.matixmedia.macroscriptingmod.utils.Chat;
 import net.minecraft.client.MinecraftClient;
 import org.apache.logging.log4j.LogManager;
@@ -88,5 +85,6 @@ public class MacroScriptingMod implements ModInitializer {
         this.runtime.addLibrary(LibWorld.class);
         this.runtime.addLibrary(LibInput.class);
         this.runtime.addLibrary(LibTime.class);
+        this.runtime.addLibrary(LibGui.class);
     }
 }
