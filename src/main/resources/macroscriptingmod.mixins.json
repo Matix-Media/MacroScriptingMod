@@ -6,10 +6,12 @@
   "mixins": [
   ],
   "client": [
+    "AccessorClientPlayerInteractionManager",
     "AccessorKeyBinding",
     "MixinClientPlayerEntity",
     "MixinGameRenderer",
-    "MixinMultiplayerScreen"
+    "MixinMultiplayerScreen",
+    "MixinWorldRenderer"
   ],
   "injectors": {
     "defaultRequire": 1

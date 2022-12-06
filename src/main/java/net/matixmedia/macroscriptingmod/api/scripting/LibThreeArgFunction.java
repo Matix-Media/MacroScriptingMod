@@ -5,7 +5,7 @@ import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.LibFunction;
 import org.luaj.vm2.lib.ThreeArgFunction;
 
-public abstract class LibThreeArgFunction extends LibFunction {
+public abstract class LibThreeArgFunction extends LibArgFunction {
     abstract public LuaValue call(LuaValue arg1, LuaValue arg2, LuaValue arg3);
 
     /** Default constructor */

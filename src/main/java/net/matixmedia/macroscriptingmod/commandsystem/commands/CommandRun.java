@@ -33,7 +33,7 @@ public class CommandRun extends Command {
         Chat.sendClientSystemMessage("Running \"" + scriptName + "\"...");
         try {
             this.runtime.execute(script);
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             Chat.sendClientSystemMessage(Chat.Color.RED + "Error executing lua script: " + e.getMessage());
         }
         return true;

@@ -3,12 +3,14 @@ package net.matixmedia.macroscriptingmod.scripting.libs;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.matixmedia.macroscriptingmod.api.scripting.Lib;
+import net.matixmedia.macroscriptingmod.api.scripting.LibThreeArgFunction;
 import net.matixmedia.macroscriptingmod.api.scripting.LibZeroArgFunction;
 import net.matixmedia.macroscriptingmod.api.scripting.objects.ObjGameMode;
 import net.matixmedia.macroscriptingmod.api.scripting.objects.ObjLocation;
 import net.matixmedia.macroscriptingmod.api.scripting.objects.ObjPlayer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.PlayerListEntry;
+import net.minecraft.util.math.Vec3d;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.ZeroArgFunction;
 
@@ -137,6 +139,18 @@ public class LibPlayer extends Lib {
             if (this.getMinecraft().player == null) return NIL;
 
             return LuaValue.valueOf(this.getMinecraft().player.getAbilities().allowFlying);
+        }
+    }
+
+    public static class GetDistanceTo extends LibThreeArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg1, LuaValue arg2, LuaValue arg3) {
+            if (this.getMinecraft().player == null) return NIL;
+            double x = arg1.checkdouble();
+            double y = arg2.checkdouble();
+            double z = arg3.checkdouble();
+
+            return LuaValue.valueOf(this.getMinecraft().player.getEyePos().distanceTo(new Vec3d(x, y, z)));
         }
     }
 }

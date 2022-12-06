@@ -8,11 +8,11 @@ import net.minecraft.util.registry.Registry;
 
 public class ObjBlock extends Obj {
 
-    public String name;
+    public String type;
     public int x, y, z;
 
     public ObjBlock(BlockPos pos, Block block) {
-        this.name = Registry.BLOCK.getId(block).toString();
+        this.type = Registry.BLOCK.getId(block).toString();
         this.x = pos.getX();
         this.y = pos.getY();
         this.z = pos.getZ();

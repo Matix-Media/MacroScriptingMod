@@ -77,7 +77,7 @@ public class Runtime {
 
     public CompletableFuture<LuaValue> execute(Script script) throws RuntimeException {
         return CompletableFuture.supplyAsync(() -> {
-            RunningScript runningScript = new RunningScript(script);
+            RunningScript runningScript = new RunningScript(script, Thread.currentThread());
             LOGGER.info("Creating sandbox for " + runningScript.getUuid());
             GlobalsHolder globalsHolder = this.createGlobals(runningScript);
             if (globalsHolder == null) throw new RuntimeException("Globals could not be initiated");
@@ -91,8 +91,15 @@ public class Runtime {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+            runningScript.setChunk(chunk);
+            LuaValue result;
+            try {
+                 result = chunk.call();
+            } catch (Exception e) {
+                Chat.sendClientSystemMessage(Chat.Color.RED + "Error executing lua script: " + e.getMessage());
+                throw e;
+            }
 
-            LuaValue result = chunk.call();
 
             LOGGER.info("Removing sandbox for " + runningScript.getUuid());
             this.runningScripts.remove(runningScript);

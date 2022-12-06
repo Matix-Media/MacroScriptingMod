@@ -11,7 +11,7 @@
   "icon": "assets/crystalscripts/icon.png",
   "environment": "client",
   "entrypoints": {
-    "main": [
+    "client": [
       "net.matixmedia.macroscriptingmod.MacroScriptingMod"
     ]
   },

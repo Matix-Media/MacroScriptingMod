@@ -1,5 +1,6 @@
 package net.matixmedia.macroscriptingmod;
 
+import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.api.ModInitializer;
@@ -7,6 +8,7 @@ import net.matixmedia.macroscriptingmod.commandsystem.CommandManager;
 import net.matixmedia.macroscriptingmod.commandsystem.commands.CommandEval;
 import net.matixmedia.macroscriptingmod.commandsystem.commands.CommandRun;
 import net.matixmedia.macroscriptingmod.commandsystem.commands.CommandRunning;
+import net.matixmedia.macroscriptingmod.commandsystem.commands.CommandStop;
 import net.matixmedia.macroscriptingmod.eventsystem.EventHandler;
 import net.matixmedia.macroscriptingmod.eventsystem.EventListener;
 import net.matixmedia.macroscriptingmod.eventsystem.events.EventConnectToServer;
@@ -28,7 +30,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 @Environment(EnvType.CLIENT)
-public class MacroScriptingMod implements ModInitializer, EventListener {
+public class MacroScriptingMod implements ClientModInitializer, EventListener {
     private static final Logger LOGGER = LogManager.getLogger("MacroScripting");
     private static MacroScriptingMod INSTANCE;
     public static String getChatPrefix() {
@@ -45,7 +47,6 @@ public class MacroScriptingMod implements ModInitializer, EventListener {
     private Runtime runtime;
     private ServerInfo lastServer;
 
-    @Override
     public void onInitialize() {
         LOGGER.info("Initializing");
         INSTANCE = this;
@@ -70,6 +71,7 @@ public class MacroScriptingMod implements ModInitializer, EventListener {
 
         this.commandManager.registerCommand(new CommandEval(this.runtime));
         this.commandManager.registerCommand(new CommandRun(this.runtime, this.scriptManager));
+        this.commandManager.registerCommand(new CommandStop(this.runtime));
         this.commandManager.registerCommand(new CommandRunning(this.runtime));
     }
 
@@ -92,6 +94,7 @@ public class MacroScriptingMod implements ModInitializer, EventListener {
         this.runtime.addLibrary(LibTime.class);
         this.runtime.addLibrary(LibGui.class);
         this.runtime.addLibrary(LibServer.class);
+        this.runtime.addLibrary(LibText.class);
     }
 
     @EventHandler
@@ -101,5 +104,10 @@ public class MacroScriptingMod implements ModInitializer, EventListener {
 
     public ServerInfo getLastServer() {
         return lastServer;
+    }
+
+    @Override
+    public void onInitializeClient() {
+        this.onInitialize();
     }
 }

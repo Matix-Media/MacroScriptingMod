@@ -17,14 +17,16 @@ import java.util.List;
 public class ObjItem extends Obj {
     private final static Style LORE_STYLE = Style.EMPTY.withColor(Formatting.DARK_PURPLE).withItalic(true);
 
-    public String name;
+    public String type;
     public int amount;
     public String lore;
+    public String name;
 
     public ObjItem(ItemStack stack) {
-        this.name = Registry.ITEM.getId(stack.getItem()).toString();
+        this.type = Registry.ITEM.getId(stack.getItem()).toString();
         this.amount = stack.getCount();
         this.lore = "";
+        this.name = stack.getName().getString();
 
         try {
             List<String> lines = new ArrayList<>();
