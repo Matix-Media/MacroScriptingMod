@@ -9,6 +9,7 @@ import net.matixmedia.macroscriptingmod.eventsystem.EventManager;
 import net.matixmedia.macroscriptingmod.eventsystem.events.EventRenderWorld;
 import net.matixmedia.macroscriptingmod.eventsystem.events.EventTick;
 import net.matixmedia.macroscriptingmod.mixins.AccessorClientPlayerInteractionManager;
+import net.matixmedia.macroscriptingmod.rendering.color.QuadColor;
 import net.matixmedia.macroscriptingmod.scripting.helpers.EspBox;
 import net.minecraft.block.Block;
 import net.minecraft.client.MinecraftClient;
@@ -178,10 +179,10 @@ public class LibWorld extends Lib implements EventListener {
     public static class ShowEspBox extends LibArgFunction {
         @Override
         public Varargs invoke(Varargs args) {
-            if (args.narg() == 7) {
-                LibWorld instance = (LibWorld) getInstance(LibWorld.class, this.getRunningScript());
-                if (instance == null) return null;
+            LibWorld instance = (LibWorld) getInstance(LibWorld.class, this.getRunningScript());
+            if (instance == null) return null;
 
+            if (args.narg() == 6) {
                 double minX = args.arg1().checkdouble();
                 double minY = args.arg(2).checkdouble();
                 double minZ = args.arg(3).checkdouble();
@@ -190,17 +191,30 @@ public class LibWorld extends Lib implements EventListener {
                 double maxY = args.arg(5).checkdouble();
                 double maxZ = args.arg(6).checkdouble();
 
-                boolean distanceFalloff = args.arg(7).checkboolean();
-
-                EspBox espBox = new EspBox(minX, minY, minZ, maxX, maxY, maxZ, distanceFalloff);
+                EspBox espBox = new EspBox(minX, minY, minZ, maxX, maxY, maxZ);
                 instance.espBoxes.add(espBox);
 
                 return LuaValue.valueOf(espBox.getUuid().toString());
             } else if (args.narg() == 9) {
-                // Custom color
+                double minX = args.arg1().checkdouble();
+                double minY = args.arg(2).checkdouble();
+                double minZ = args.arg(3).checkdouble();
+
+                double maxX = args.arg(4).checkdouble();
+                double maxY = args.arg(5).checkdouble();
+                double maxZ = args.arg(6).checkdouble();
+
+                int red = args.arg(7).checkint();
+                int green = args.arg(8).checkint();
+                int blue = args.arg(9).checkint();
+
+                EspBox espBox = new EspBox(minX, minY, minZ, maxX, maxY, maxZ, red, green, blue);
+                instance.espBoxes.add(espBox);
+
+                return LuaValue.valueOf(espBox.getUuid().toString());
             }
 
-            return argerror(1,"value");
+            return argerror(1,"Invalid amount of arguments (valid is 6 or 9)");
         }
     }
 
