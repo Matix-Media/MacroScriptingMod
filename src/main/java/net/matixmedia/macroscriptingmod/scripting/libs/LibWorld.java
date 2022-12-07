@@ -56,8 +56,13 @@ public class LibWorld extends Lib implements EventListener {
         MinecraftClient mc = MinecraftClient.getInstance();
         if (mc.world == null) return;
 
-        for (EspBox espBox : this.espBoxes)
-            espBox.render(event.getMatrices(), event.getTickDelta(), event.getLimitTime(), event.getCamera(), event.getGameRenderer(), event.getPositionMatrix());
+        synchronized (this.espBoxes) {
+            for (int i = 0; i < this.espBoxes.size(); i++) {
+                EspBox espBox = this.espBoxes.get(i);
+                if (espBox == null) continue;
+                espBox.render(event.getMatrices(), event.getTickDelta(), event.getLimitTime(), event.getCamera(), event.getGameRenderer(), event.getPositionMatrix());
+            }
+        }
     }
 
     @EventHandler
@@ -75,22 +80,25 @@ public class LibWorld extends Lib implements EventListener {
             espBox.setDistance(distance);
         }
 
-        ListIterator<BlockPos> iterator = this.miningBlocks.listIterator();
-        while (iterator.hasNext()) {
-            BlockPos pos = iterator.next();
-            Vec3d posV = new Vec3d(pos.getX(), pos.getY(), pos.getZ());
-            float breakDelta = mc.world.getBlockState(pos).calcBlockBreakingDelta(mc.player, mc.world, pos);
 
-            if (posV.distanceTo(mc.player.getEyePos()) > 4.5) {
-                iterator.remove();
-                continue;
-            }
+        synchronized (this.miningBlocks) {
+            ListIterator<BlockPos> iterator = this.miningBlocks.listIterator();
+            while (iterator.hasNext()) {
+                BlockPos pos = iterator.next();
+                Vec3d posV = new Vec3d(pos.getX(), pos.getY(), pos.getZ());
+                float breakDelta = mc.world.getBlockState(pos).calcBlockBreakingDelta(mc.player, mc.world, pos);
 
-            mc.interactionManager.updateBlockBreakingProgress(pos, Direction.UP);
-            mc.player.swingHand(Hand.MAIN_HAND);
+                if (posV.distanceTo(mc.player.getEyePos()) > 4.5) {
+                    iterator.remove();
+                    continue;
+                }
 
-            if (((AccessorClientPlayerInteractionManager) mc.interactionManager).getCurrentBreakingProgress() == 0F) {
-                iterator.remove();
+                mc.interactionManager.updateBlockBreakingProgress(pos, Direction.UP);
+                mc.player.swingHand(Hand.MAIN_HAND);
+
+                if (((AccessorClientPlayerInteractionManager) mc.interactionManager).getCurrentBreakingProgress() == 0F) {
+                    iterator.remove();
+                }
             }
         }
     }
@@ -161,7 +169,7 @@ public class LibWorld extends Lib implements EventListener {
         public LuaValue call() {
             if (this.getMinecraft().world == null) return NIL;
             List<LuaValue> luaEntities = new ArrayList<>();
-            for(Entity entity : this.getMinecraft().world.getEntities()) luaEntities.add(new ObjEntity(entity).toLua());
+            for(Entity entity : this.getMinecraft().world.getEntities()) if (entity != null) luaEntities.add(new ObjEntity(entity).toLua());
 
             return LuaValue.listOf(luaEntities.toArray(new LuaValue[0]));
         }

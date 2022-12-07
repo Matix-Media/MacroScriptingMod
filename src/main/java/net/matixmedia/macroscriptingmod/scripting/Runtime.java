@@ -4,13 +4,16 @@ import net.matixmedia.macroscriptingmod.api.scripting.Lib;
 import net.matixmedia.macroscriptingmod.eventsystem.EventManager;
 import net.matixmedia.macroscriptingmod.eventsystem.events.EventScriptEnd;
 import net.matixmedia.macroscriptingmod.exceptions.InitializationException;
+import net.matixmedia.macroscriptingmod.exceptions.ScriptInterruptedException;
 import net.matixmedia.macroscriptingmod.utils.Chat;
 import net.matixmedia.macroscriptingmod.utils.RealTimeOutputStream;
 import org.apache.commons.io.output.WriterOutputStream;
+import org.apache.commons.logging.Log;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LoadState;
+import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.compiler.LuaC;
 import org.luaj.vm2.lib.*;
@@ -42,7 +45,7 @@ public class Runtime {
         this.libraries.add(lib);
     }
 
-    private GlobalsHolder createGlobals(RunningScript runningScript) {
+    private GlobalsHolder createGlobals(RunningScript runningScript, InterruptDebugger interruptDebugger) {
         Globals globals = new Globals();
         globals.STDOUT = this.printStream;
         List<LibFunction> initiatedLibs = new ArrayList<>();
@@ -68,6 +71,8 @@ public class Runtime {
             return null;
         }
 
+        globals.load(interruptDebugger);
+
         LoadState.install(globals);
         LuaC.install(globals);
 
@@ -77,9 +82,10 @@ public class Runtime {
 
     public CompletableFuture<LuaValue> execute(Script script) throws RuntimeException {
         return CompletableFuture.supplyAsync(() -> {
-            RunningScript runningScript = new RunningScript(script, Thread.currentThread());
+            InterruptDebugger interruptDebugger = new InterruptDebugger();
+            RunningScript runningScript = new RunningScript(script, Thread.currentThread(), interruptDebugger);
             LOGGER.info("Creating sandbox for " + runningScript.getUuid());
-            GlobalsHolder globalsHolder = this.createGlobals(runningScript);
+            GlobalsHolder globalsHolder = this.createGlobals(runningScript, interruptDebugger);
             if (globalsHolder == null) throw new RuntimeException("Globals could not be initiated");
             this.runningScripts.add(runningScript);
 
@@ -87,17 +93,26 @@ public class Runtime {
 
             LuaValue chunk;
             try {
-                chunk = globalsHolder.getGlobals().load(script.getContent());
+                chunk = globalsHolder.getGlobals().load(script.getContent(), script.getFile() != null ? script.getFile().getName() : "<LUA CODE>");
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
             runningScript.setChunk(chunk);
-            LuaValue result;
+            LuaValue result = LuaValue.NIL;
+            RuntimeException exception = null;
             try {
                  result = chunk.call();
-            } catch (Exception e) {
-                Chat.sendClientSystemMessage(Chat.Color.RED + "Error executing lua script: " + e.getMessage());
-                throw e;
+            } catch (RuntimeException e) {
+                LOGGER.info("Type: " + e.getClass().getSimpleName());
+                if (e instanceof LuaError luaError && luaError.getCause() != null) {
+                    LOGGER.info("Cause: " + luaError.getClass().getSimpleName());
+                    LOGGER.info("Script got stopped");
+                } else {
+                    LOGGER.error("Error executing lua script");
+                    Chat.sendClientSystemMessage(Chat.Color.RED + "Error executing lua script: " + e.getMessage());
+                    e.printStackTrace();
+                    exception = e;
+                }
             }
 
 
@@ -107,11 +122,26 @@ public class Runtime {
 
             for (LibFunction lib : globalsHolder.getLibraries()) if (lib instanceof Lib _lib) _lib.dispose();
 
+            if (exception != null) throw exception;
+
             return result;
         });
     }
 
     public Collection<RunningScript> getRunningScripts() {
         return new ArrayList<>(this.runningScripts);
+    }
+
+    public Collection<RunningScript> getRunningScriptsByNameOrId(String nameOrId) {
+        List<RunningScript> returned = new ArrayList<>();
+
+        for (RunningScript runningScript : this.runningScripts) {
+            if ((runningScript.getUuid().toString().equals(nameOrId)) ||
+                    (runningScript.getScript().getFile() != null && runningScript.getScript().getFile().getName().equals(nameOrId))) {
+                returned.add(runningScript);
+            }
+        }
+
+        return returned;
     }
 }

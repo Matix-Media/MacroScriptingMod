@@ -20,19 +20,15 @@ public class CommandStop extends Command {
 
     @Override
     public boolean execute(String[] args) {
-
         String scriptName = String.join(" ", args);
 
-        for (RunningScript runningScript : this.runtime.getRunningScripts()) {
-            if (runningScript.getScript().getFile() == null) continue;
-
-            if (runningScript.getScript().getFile().getName().equals(scriptName)) {
-                runningScript.getThread().stop();
+        boolean stoppedScripts = false;
+        for (RunningScript runningScript : this.runtime.getRunningScriptsByNameOrId(scriptName)) {
+                runningScript.stop();
                 Chat.sendClientSystemMessage("Stopped \"" + scriptName + "\"");
-                return true;
-            }
+                stoppedScripts = true;
         }
-        Chat.sendClientSystemMessage(Chat.Color.RED + "Script not found");
+        if (!stoppedScripts) Chat.sendClientSystemMessage(Chat.Color.RED + "Script not found");
         return true;
     }
 

@@ -3,7 +3,6 @@ package net.matixmedia.macroscriptingmod;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.api.ModInitializer;
 import net.matixmedia.macroscriptingmod.commandsystem.CommandManager;
 import net.matixmedia.macroscriptingmod.commandsystem.commands.CommandEval;
 import net.matixmedia.macroscriptingmod.commandsystem.commands.CommandRun;
@@ -13,6 +12,7 @@ import net.matixmedia.macroscriptingmod.eventsystem.EventHandler;
 import net.matixmedia.macroscriptingmod.eventsystem.EventListener;
 import net.matixmedia.macroscriptingmod.eventsystem.events.EventConnectToServer;
 import net.matixmedia.macroscriptingmod.exceptions.InitializationException;
+import net.matixmedia.macroscriptingmod.scripting.InterruptDebugger;
 import net.matixmedia.macroscriptingmod.scripting.Runtime;
 import net.matixmedia.macroscriptingmod.scripting.ScriptManager;
 import net.matixmedia.macroscriptingmod.scripting.libs.*;
@@ -95,6 +95,7 @@ public class MacroScriptingMod implements ClientModInitializer, EventListener {
         this.runtime.addLibrary(LibGui.class);
         this.runtime.addLibrary(LibServer.class);
         this.runtime.addLibrary(LibText.class);
+        this.runtime.addLibrary(InterruptDebugger.class);
     }
 
     @EventHandler

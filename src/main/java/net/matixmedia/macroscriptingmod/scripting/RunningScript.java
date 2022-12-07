@@ -13,13 +13,20 @@ public class RunningScript {
     private final Date startedAt;
     private final UUID uuid;
     private final Thread thread;
+    private final InterruptDebugger interruptDebugger;
 
-    public RunningScript(Script script, Thread thread) {
+    public RunningScript(Script script, Thread thread, InterruptDebugger interruptDebugger) {
         this.script = script;
 
         this.startedAt = new Date();
         this.uuid = UUID.randomUUID();
         this.thread = thread;
+        this.interruptDebugger = interruptDebugger;
+    }
+
+    public void stop() {
+        // this.thread.interrupt();
+        this.interruptDebugger.interrupt();
     }
 
     public void setGlobals(Globals globals) {
@@ -29,6 +36,8 @@ public class RunningScript {
     public void setChunk(LuaValue chunk) {
         this.chunk = chunk;
     }
+
+
 
     public Script getScript() {
         return script;
