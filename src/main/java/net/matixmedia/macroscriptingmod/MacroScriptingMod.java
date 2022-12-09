@@ -47,6 +47,12 @@ public class MacroScriptingMod implements ClientModInitializer, EventListener {
     private Runtime runtime;
     private ServerInfo lastServer;
 
+
+    @Override
+    public void onInitializeClient() {
+        this.onInitialize();
+    }
+
     public void onInitialize() {
         LOGGER.info("Initializing");
         INSTANCE = this;
@@ -107,8 +113,11 @@ public class MacroScriptingMod implements ClientModInitializer, EventListener {
         return lastServer;
     }
 
-    @Override
-    public void onInitializeClient() {
-        this.onInitialize();
+    public ScriptManager getScriptManager() {
+        return scriptManager;
+    }
+
+    public Runtime getRuntime() {
+        return runtime;
     }
 }
