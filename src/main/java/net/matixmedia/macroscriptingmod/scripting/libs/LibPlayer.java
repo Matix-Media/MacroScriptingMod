@@ -2,10 +2,7 @@ package net.matixmedia.macroscriptingmod.scripting.libs;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
-import net.matixmedia.macroscriptingmod.api.scripting.Lib;
-import net.matixmedia.macroscriptingmod.api.scripting.LibOneArgFunction;
-import net.matixmedia.macroscriptingmod.api.scripting.LibThreeArgFunction;
-import net.matixmedia.macroscriptingmod.api.scripting.LibZeroArgFunction;
+import net.matixmedia.macroscriptingmod.api.scripting.*;
 import net.matixmedia.macroscriptingmod.api.scripting.objects.ObjGameMode;
 import net.matixmedia.macroscriptingmod.api.scripting.objects.ObjItem;
 import net.matixmedia.macroscriptingmod.api.scripting.objects.ObjLocation;
@@ -16,6 +13,7 @@ import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.ZeroArgFunction;
@@ -204,4 +202,93 @@ public class LibPlayer extends Lib {
             return null;
         }
     }
+
+    public static class GetYaw extends LibZeroArgFunction {
+        @Override
+        public LuaValue call() {
+            if (this.getMinecraft().player == null) return null;
+            return LuaValue.valueOf(this.getMinecraft().player.getHeadYaw());
+        }
+    }
+
+    public static class GetPitch extends LibZeroArgFunction {
+        @Override
+        public LuaValue call() {
+            if (this.getMinecraft().player == null) return null;
+            return LuaValue.valueOf(this.getMinecraft().player.getPitch());
+        }
+    }
+
+    public static class Look extends LibTwoArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg1, LuaValue arg2) {
+            if (this.getMinecraft().player ==  null) return null;
+            double yaw = arg1.checkdouble();
+            double pitch = arg2.checkdouble();
+            pitch = MathHelper.clamp(pitch,-90,90);
+            yaw = MathHelper.clamp(yaw,-180,180);
+            this.getMinecraft().player.setYaw((float) yaw);
+            this.getMinecraft().player.setPitch((float) pitch);
+            return null;
+        }
+    }
+
+    public static class LookSmooth extends LibThreeArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg1, LuaValue arg2, LuaValue arg3) {
+            if (this.getMinecraft().player ==  null) return null;
+            MinecraftClient mc = this.getMinecraft();
+            double yawWanted = arg1.checkdouble();
+            double pitchWanted = arg2.checkdouble();
+            double seconds = arg3.checkdouble();
+            double steps = seconds * 100;
+            double yaw = mc.player.getHeadYaw();
+            double pitch = mc.player.getPitch();
+            yawWanted = MathHelper.clamp(yawWanted,-180,180);
+            pitchWanted = MathHelper.clamp(pitchWanted,-90,90);
+
+            if (yaw < 0) yaw += 360;
+            if (yawWanted < 0) yawWanted += 360;
+
+            pitch += 90;
+            pitchWanted += 90;
+
+            double yawDiff = yawWanted - yaw;
+            double pitchDiff = pitchWanted - pitch;
+
+            if (yawDiff > 180) yawDiff -= 360;
+            else if (yawDiff < -180) yawDiff += 360;
+
+            double yawStep = yawDiff / steps;
+            double pitchStep = pitchDiff / steps;
+
+            double savedYaw = mc.player.getHeadYaw();
+            double savedPitch = mc.player.getPitch();
+            for (int i = 0; i < steps; i++) {
+                double toBeSetYaw = savedYaw + yawStep;
+                double toBeSetPitch = savedPitch + pitchStep;
+
+                if (toBeSetYaw > 180) toBeSetYaw -= 360;
+                else if (toBeSetYaw < -180) toBeSetYaw += 360;
+
+                mc.player.setYaw((float) (toBeSetYaw));
+                mc.player.setPitch((float) (toBeSetPitch));
+                savedYaw = toBeSetYaw;
+                savedPitch = toBeSetPitch;
+
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            mc.player.setYaw((float) yawWanted);
+            mc.player.setPitch((float) pitchWanted - 90);
+
+            return null;
+        }
+
+    }
+
+
 }
