@@ -11,11 +11,17 @@ import net.matixmedia.macroscriptingmod.api.scripting.objects.ObjItem;
 import net.matixmedia.macroscriptingmod.api.scripting.objects.ObjLocation;
 import net.matixmedia.macroscriptingmod.api.scripting.objects.ObjPlayer;
 import net.matixmedia.macroscriptingmod.scripting.helpers.ItemSearch;
+import net.matixmedia.macroscriptingmod.utils.Chat;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
 import net.minecraft.client.network.PlayerListEntry;
+import net.minecraft.command.argument.TextArgumentType;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.command.TellRawCommand;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
+import net.minecraft.text.Texts;
 import net.minecraft.util.math.Vec3d;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.ZeroArgFunction;
@@ -201,6 +207,16 @@ public class LibPlayer extends Lib {
             if (slotId > 8) return argerror(1, "Slot must be between 0 and 8");
 
             this.getMinecraft().player.getInventory().selectedSlot = slotId;
+            return null;
+        }
+    }
+
+    public static class Tellraw extends LibOneArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg) {
+            //JsonElement jsonElement = JsonParser.parseString(arg.checkjstring());
+            MutableText text = Text.Serializer.fromJson(arg.checkjstring());
+            Chat.sendClientMessage(text);
             return null;
         }
     }
