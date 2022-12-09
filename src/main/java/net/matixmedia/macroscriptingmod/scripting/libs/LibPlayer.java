@@ -3,16 +3,24 @@ package net.matixmedia.macroscriptingmod.scripting.libs;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.matixmedia.macroscriptingmod.api.scripting.Lib;
+import net.matixmedia.macroscriptingmod.api.scripting.LibOneArgFunction;
 import net.matixmedia.macroscriptingmod.api.scripting.LibThreeArgFunction;
 import net.matixmedia.macroscriptingmod.api.scripting.LibZeroArgFunction;
 import net.matixmedia.macroscriptingmod.api.scripting.objects.ObjGameMode;
+import net.matixmedia.macroscriptingmod.api.scripting.objects.ObjItem;
 import net.matixmedia.macroscriptingmod.api.scripting.objects.ObjLocation;
 import net.matixmedia.macroscriptingmod.api.scripting.objects.ObjPlayer;
+import net.matixmedia.macroscriptingmod.scripting.helpers.ItemSearch;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
 import net.minecraft.client.network.PlayerListEntry;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec3d;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.ZeroArgFunction;
+
+import java.util.List;
 
 public class LibPlayer extends Lib {
 
@@ -151,6 +159,49 @@ public class LibPlayer extends Lib {
             double z = arg3.checkdouble();
 
             return LuaValue.valueOf(this.getMinecraft().player.getEyePos().distanceTo(new Vec3d(x, y, z)));
+        }
+    }
+
+    public static class FindItem extends LibOneArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg) {
+            MinecraftClient mc = MinecraftClient.getInstance();
+            if (mc.player == null) return NIL;
+
+            ItemSearch search = new ItemSearch(arg.checkjstring());
+            List<ItemStack> inventory = mc.player.getInventory().main;
+
+            for (int i = 0; i < inventory.size(); i++) {
+                ItemStack slot = inventory.get(i);
+                if (search.matches(slot)) return LuaValue.valueOf(i);
+            }
+
+            return NIL;
+        }
+    }
+
+    public static class GetItem extends LibOneArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg) {
+            MinecraftClient mc = MinecraftClient.getInstance();
+            if (mc.player == null) return NIL;
+            int slot = arg.checkint();
+            List<ItemStack> inventory = mc.player.getInventory().main;
+
+            return new ObjItem(inventory.get(slot)).toLua();
+        }
+    }
+
+    public static class SelectHotbarSlot extends LibOneArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg) {
+            if (this.getMinecraft().player == null) return null;
+
+            int slotId = arg.checkint();
+            if (slotId > 8) return argerror(1, "Slot must be between 0 and 8");
+
+            this.getMinecraft().player.getInventory().selectedSlot = slotId;
+            return null;
         }
     }
 }
