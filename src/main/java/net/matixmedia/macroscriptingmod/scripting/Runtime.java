@@ -74,10 +74,11 @@ public class Runtime {
         return new GlobalsHolder(globals, initiatedLibs);
     }
 
-    public CompletableFuture<LuaValue> execute(Script script) throws RuntimeException {
-        return CompletableFuture.supplyAsync(() -> {
-            InterruptDebugger interruptDebugger = new InterruptDebugger();
-            RunningScript runningScript = new RunningScript(script, Thread.currentThread(), interruptDebugger);
+    public RunScriptResult execute(Script script) throws RuntimeException {
+        InterruptDebugger interruptDebugger = new InterruptDebugger();
+        RunningScript runningScript = new RunningScript(script, Thread.currentThread(), interruptDebugger);
+
+        return new RunScriptResult(runningScript, CompletableFuture.supplyAsync(() -> {
             LOGGER.info("Creating sandbox for " + runningScript.getUuid());
             GlobalsHolder globalsHolder = this.createGlobals(runningScript, interruptDebugger);
             if (globalsHolder == null) throw new RuntimeException("Globals could not be initiated");
@@ -95,7 +96,7 @@ public class Runtime {
             LuaValue result = LuaValue.NIL;
             RuntimeException exception = null;
             try {
-                 result = chunk.call();
+                result = chunk.call();
             } catch (RuntimeException e) {
                 LOGGER.info("Type: " + e.getClass().getSimpleName());
                 if (e instanceof LuaError luaError && luaError.getCause() != null) {
@@ -119,7 +120,7 @@ public class Runtime {
             if (exception != null) throw exception;
 
             return result;
-        });
+        }));
     }
 
     public Collection<RunningScript> getRunningScripts() {
@@ -137,5 +138,23 @@ public class Runtime {
         }
 
         return returned;
+    }
+
+    public static class RunScriptResult {
+        private CompletableFuture<LuaValue> result;
+        private RunningScript runningScript;
+
+        public RunScriptResult(RunningScript runningScript, CompletableFuture<LuaValue> result) {
+            this.runningScript = runningScript;
+            this.result = result;
+        }
+
+        public CompletableFuture<LuaValue> getResult() {
+            return result;
+        }
+
+        public RunningScript getRunningScript() {
+            return runningScript;
+        }
     }
 }
