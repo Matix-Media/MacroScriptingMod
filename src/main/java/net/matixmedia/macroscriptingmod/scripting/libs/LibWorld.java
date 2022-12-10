@@ -212,7 +212,7 @@ public class LibWorld extends Lib implements EventListener {
                 return LuaValue.valueOf(espBox.getUuid().toString());
             }
 
-            return argerror(1,"Invalid amount of arguments (valid is 6 or 9)");
+            return argerror("Invalid amount of arguments (valid is 6 or 9)");
         }
     }
 
