@@ -10,6 +10,7 @@
     "AccessorKeyBinding",
     "MixinChatHud",
     "MixinClientPlayerEntity",
+    "MixinDisconnectedScreen",
     "MixinGameRenderer",
     "MixinMultiplayerScreen",
     "MixinScreen",

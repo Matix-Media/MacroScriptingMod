@@ -6,10 +6,7 @@ import net.matixmedia.macroscriptingmod.api.scripting.LibZeroArgFunction;
 import net.matixmedia.macroscriptingmod.eventsystem.EventHandler;
 import net.matixmedia.macroscriptingmod.eventsystem.EventListener;
 import net.matixmedia.macroscriptingmod.eventsystem.EventManager;
-import net.matixmedia.macroscriptingmod.eventsystem.events.EventBlockBreak;
-import net.matixmedia.macroscriptingmod.eventsystem.events.EventChatMessage;
-import net.matixmedia.macroscriptingmod.eventsystem.events.EventConnectToServer;
-import net.matixmedia.macroscriptingmod.eventsystem.events.EventTick;
+import net.matixmedia.macroscriptingmod.eventsystem.events.*;
 import org.luaj.vm2.LuaValue;
 
 import java.util.ArrayList;
@@ -61,18 +58,33 @@ public class LibEvents extends Lib implements EventListener {
     }
 
     @EventHandler
+    public void onDisconnect(EventDisconnect event) {
+        this.callEvent("on_disconnect", new LuaValue[] {LuaValue.valueOf(event.getReason())});
+    }
+
+    @EventHandler
     public void onTick(EventTick event) {
         this.callEvent("on_tick", new LuaValue[0]);
     }
 
     private boolean callEvent(String event, LuaValue[] args) {
+        boolean cancelEvent = false;
+
         for (EventListener listener : this.listeners) {
             if (!listener.event.equals(event.toLowerCase())) continue;
 
-            LuaValue value = listener.handler.invoke(args).arg1();
-            if (value.isboolean() && !value.checkboolean()) return true;
+            LuaValue result = listener.handler.invoke(args).arg1();
+            if (result.isboolean() && !result.checkboolean()) cancelEvent = true;
         }
-        return false;
+
+        if (this.useFunctionHandlers) {
+            LuaValue functionHandler = this.getRunningScript().getGlobals().get(event);
+            if (!functionHandler.isfunction()) return cancelEvent;
+            LuaValue result = functionHandler.invoke(args).arg1();
+            if (result.isboolean() && !result.checkboolean()) cancelEvent = true;
+        }
+
+        return cancelEvent;
     }
 
     public static class UseFunctionHandlers extends LibZeroArgFunction {
