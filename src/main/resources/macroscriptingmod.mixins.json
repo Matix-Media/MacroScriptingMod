@@ -8,6 +8,7 @@
   "client": [
     "AccessorClientPlayerInteractionManager",
     "AccessorKeyBinding",
+    "MixinChatHud",
     "MixinClientPlayerEntity",
     "MixinGameRenderer",
     "MixinMultiplayerScreen",

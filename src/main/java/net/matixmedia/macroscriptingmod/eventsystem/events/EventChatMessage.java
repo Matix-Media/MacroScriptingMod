@@ -5,7 +5,28 @@ import net.matixmedia.macroscriptingmod.eventsystem.Event;
 
 public class EventChatMessage {
 
-    public static class Receive extends Event {}
+    public static class Receive extends CancellableEvent {
+        private String message;
+        private final String originalMessage;
+
+        public Receive(String message) {
+            this.message = message;
+            this.originalMessage = message;
+        }
+
+        public String getMessage() {
+            return this.message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+
+        @Override
+        public boolean isModified() {
+            return !this.originalMessage.equals(this.message);
+        }
+    }
 
     public static class Send extends CancellableEvent {
         private String message;
