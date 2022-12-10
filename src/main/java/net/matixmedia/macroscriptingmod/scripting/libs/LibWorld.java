@@ -2,6 +2,7 @@ package net.matixmedia.macroscriptingmod.scripting.libs;
 
 import net.matixmedia.macroscriptingmod.api.scripting.*;
 import net.matixmedia.macroscriptingmod.api.scripting.objects.ObjBlock;
+import net.matixmedia.macroscriptingmod.api.scripting.objects.ObjDirection;
 import net.matixmedia.macroscriptingmod.api.scripting.objects.ObjEntity;
 import net.matixmedia.macroscriptingmod.eventsystem.EventHandler;
 import net.matixmedia.macroscriptingmod.eventsystem.EventListener;
@@ -17,10 +18,7 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.ShulkerEntity;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 import net.minecraft.util.registry.Registry;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
@@ -253,6 +251,25 @@ public class LibWorld extends Lib implements EventListener {
             BlockPos pos = new BlockPos(x, y, z);
             instance.miningBlocks.add(pos);
             return null;
+        }
+    }
+
+    public static class CalcYawPitchTo extends LibThreeArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg1, LuaValue arg2, LuaValue arg3) {
+            if (this.getMinecraft().player == null) return null;
+            double xPos = arg1.checkdouble() + 0.5D;
+            double zPos = arg3.checkdouble() + 0.5D;
+            double deltaX = xPos - this.getMinecraft().player.getX();
+            double deltaZ = zPos - this.getMinecraft().player.getZ();
+
+            int yaw;
+            for (yaw = (int)(Math.atan2(deltaZ, deltaX) * 180.0 / Math.PI - 90.0); yaw < 0; yaw += 360) {}
+
+            if (yaw > 180) yaw -= 360;
+            else if (yaw < -180) yaw += 360;
+
+            return new ObjDirection(yaw - 180, 0).toLua();
         }
     }
 }
