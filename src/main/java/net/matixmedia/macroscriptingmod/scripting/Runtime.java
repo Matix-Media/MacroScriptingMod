@@ -3,6 +3,7 @@ package net.matixmedia.macroscriptingmod.scripting;
 import net.matixmedia.macroscriptingmod.api.scripting.Lib;
 import net.matixmedia.macroscriptingmod.eventsystem.EventManager;
 import net.matixmedia.macroscriptingmod.eventsystem.events.EventScriptEnd;
+import net.matixmedia.macroscriptingmod.exceptions.ScriptInterruptedException;
 import net.matixmedia.macroscriptingmod.utils.Chat;
 import net.matixmedia.macroscriptingmod.utils.RealTimeOutputStream;
 import org.apache.logging.log4j.LogManager;
@@ -98,12 +99,13 @@ public class Runtime {
             try {
                 result = chunk.call();
             } catch (RuntimeException e) {
-                LOGGER.info("Type: " + e.getClass().getSimpleName());
-                if (e instanceof LuaError luaError && luaError.getCause() != null) {
-                    LOGGER.info("Cause: " + luaError.getClass().getSimpleName());
+                if (e instanceof LuaError luaError && luaError.getCause() != null && luaError.getCause() instanceof ScriptInterruptedException) {
+                    LOGGER.info("Cause: " + luaError.getCause().getClass().getSimpleName());
                     LOGGER.info("Script got stopped");
                 } else {
                     LOGGER.error("Error executing lua script");
+                    LOGGER.error("Type: " + e.getClass().getSimpleName());
+                    if (e instanceof LuaError luaError && luaError.getCause() != null) LOGGER.error("Cause: " + e.getCause().getClass().getSimpleName());
                     Chat.sendClientSystemMessage(Chat.Color.RED + "Error executing lua script: " + e.getMessage());
                     e.printStackTrace();
                     exception = e;
