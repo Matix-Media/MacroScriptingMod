@@ -15,9 +15,12 @@ public class InterruptDebugger extends DebugLib {
     @Override
     public void onInstruction(int pc, Varargs v, int top) {
         if (this.interrupt) {
-            System.out.println("Script interrupted");
             throw new ScriptInterruptedException("The script got interrupted");
         }
         super.onInstruction(pc, v, top);
+    }
+
+    public boolean isInterrupted() {
+        return interrupt;
     }
 }

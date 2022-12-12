@@ -7,12 +7,17 @@ import net.matixmedia.macroscriptingmod.eventsystem.EventHandler;
 import net.matixmedia.macroscriptingmod.eventsystem.EventListener;
 import net.matixmedia.macroscriptingmod.eventsystem.EventManager;
 import net.matixmedia.macroscriptingmod.eventsystem.events.*;
+import net.matixmedia.macroscriptingmod.exceptions.ScriptInterruptedException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaValue;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class LibEvents extends Lib implements EventListener {
+    private static final Logger LOGGER = LogManager.getLogger("MacroScripting/Lib/Events");
 
     private final List<EventListener> listeners = new ArrayList<>();
     private boolean useFunctionHandlers = false;
@@ -37,6 +42,12 @@ public class LibEvents extends Lib implements EventListener {
             this.event = event.toLowerCase();
             this.handler = handler;
         }
+    }
+
+    @EventHandler
+    public void onScriptStop(EventScriptStop event) {
+        if (event.getRunningScript() == this.getRunningScript() && (this.useFunctionHandlers || this.listeners.size() > 0))
+            event.cancel();
     }
 
     @EventHandler
@@ -70,19 +81,30 @@ public class LibEvents extends Lib implements EventListener {
     private boolean callEvent(String event, LuaValue[] args) {
         boolean cancelEvent = false;
 
-        for (EventListener listener : this.listeners) {
-            if (!listener.event.equals(event.toLowerCase())) continue;
+        try {
+            for (EventListener listener : this.listeners) {
+                if (!listener.event.equals(event.toLowerCase())) continue;
 
-            LuaValue result = listener.handler.invoke(args).arg1();
-            if (result.isboolean() && !result.checkboolean()) cancelEvent = true;
+                LuaValue result = listener.handler.invoke(args).arg1();
+                if (result.isboolean() && !result.checkboolean()) cancelEvent = true;
+            }
+
+            if (this.useFunctionHandlers) {
+                LuaValue functionHandler = this.getRunningScript().getGlobals().get(event);
+                System.out.println(functionHandler);
+                if (!functionHandler.isfunction()) return cancelEvent;
+                LuaValue result = functionHandler.invoke(args).arg1();
+                if (result.isboolean() && !result.checkboolean()) cancelEvent = true;
+            }
+        } catch (Exception e) {
+            if (e instanceof LuaError luaError) {
+                if (!(luaError.getCause() instanceof ScriptInterruptedException)) {
+                    LOGGER.error("Error calling event listener:");
+                    LOGGER.error(e.getMessage());
+                }
+            } else throw e;
         }
 
-        if (this.useFunctionHandlers) {
-            LuaValue functionHandler = this.getRunningScript().getGlobals().get(event);
-            if (!functionHandler.isfunction()) return cancelEvent;
-            LuaValue result = functionHandler.invoke(args).arg1();
-            if (result.isboolean() && !result.checkboolean()) cancelEvent = true;
-        }
 
         return cancelEvent;
     }
@@ -94,6 +116,7 @@ public class LibEvents extends Lib implements EventListener {
             if (instance == null) return null;
 
             instance.useFunctionHandlers = true;
+            System.out.println("Using function handlers");
             return null;
         }
     }

@@ -3,6 +3,7 @@ package net.matixmedia.macroscriptingmod.scripting;
 import net.matixmedia.macroscriptingmod.api.scripting.Lib;
 import net.matixmedia.macroscriptingmod.eventsystem.EventManager;
 import net.matixmedia.macroscriptingmod.eventsystem.events.EventScriptEnd;
+import net.matixmedia.macroscriptingmod.eventsystem.events.EventScriptStop;
 import net.matixmedia.macroscriptingmod.exceptions.ScriptInterruptedException;
 import net.matixmedia.macroscriptingmod.utils.Chat;
 import net.matixmedia.macroscriptingmod.utils.RealTimeOutputStream;
@@ -71,13 +72,14 @@ public class Runtime {
         LoadState.install(globals);
         LuaC.install(globals);
 
-        runningScript.setGlobals(globals);
-        return new GlobalsHolder(globals, initiatedLibs);
+        GlobalsHolder holder = new GlobalsHolder(globals, initiatedLibs);
+        runningScript.setGlobalsHolder(holder);
+        return holder;
     }
 
     public RunScriptResult execute(Script script) throws RuntimeException {
         InterruptDebugger interruptDebugger = new InterruptDebugger();
-        RunningScript runningScript = new RunningScript(script, Thread.currentThread(), interruptDebugger);
+        RunningScript runningScript = new RunningScript(script, Thread.currentThread(), interruptDebugger, this);
 
         return new RunScriptResult(runningScript, CompletableFuture.supplyAsync(() -> {
             LOGGER.info("Creating sandbox for " + runningScript.getUuid());
@@ -112,17 +114,22 @@ public class Runtime {
                 }
             }
 
-
-            LOGGER.info("Removing sandbox for " + runningScript.getUuid());
-            this.runningScripts.remove(runningScript);
-            EventManager.fire(new EventScriptEnd(runningScript));
-
-            for (LibFunction lib : globalsHolder.getLibraries()) if (lib instanceof Lib _lib) _lib.dispose();
+            EventScriptStop event = new EventScriptStop(runningScript);
+            EventManager.fire(event);
+            if (!event.isCanceled()) runningScript.stop();
 
             if (exception != null) throw exception;
 
             return result;
         }));
+    }
+
+    public void removeSandbox(RunningScript runningScript) {
+        LOGGER.info("Removing sandbox for " + runningScript.getUuid());
+        this.runningScripts.remove(runningScript);
+        EventManager.fire(new EventScriptEnd(runningScript));
+
+        for (LibFunction lib : runningScript.getGlobalsHolder().getLibraries()) if (lib instanceof Lib _lib) _lib.dispose();
     }
 
     public Collection<RunningScript> getRunningScripts() {

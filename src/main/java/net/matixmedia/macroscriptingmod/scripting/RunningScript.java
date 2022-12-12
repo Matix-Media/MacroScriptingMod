@@ -8,29 +8,31 @@ import java.util.UUID;
 
 public class RunningScript {
     private final Script script;
-    private Globals globals;
+    private GlobalsHolder globalsHolder;
     private LuaValue chunk;
     private final Date startedAt;
     private final UUID uuid;
     private final Thread thread;
     private final InterruptDebugger interruptDebugger;
+    private final Runtime runtime;
 
-    public RunningScript(Script script, Thread thread, InterruptDebugger interruptDebugger) {
+    public RunningScript(Script script, Thread thread, InterruptDebugger interruptDebugger, Runtime runtime) {
         this.script = script;
 
         this.startedAt = new Date();
         this.uuid = UUID.randomUUID();
         this.thread = thread;
         this.interruptDebugger = interruptDebugger;
+        this.runtime = runtime;
     }
 
     public void stop() {
-        // this.thread.interrupt();
         this.interruptDebugger.interrupt();
+        this.runtime.removeSandbox(this);
     }
 
-    public void setGlobals(Globals globals) {
-        this.globals = globals;
+    public void setGlobalsHolder(GlobalsHolder globals) {
+        this.globalsHolder = globals;
     }
 
     public void setChunk(LuaValue chunk) {
@@ -52,7 +54,11 @@ public class RunningScript {
     }
 
     public Globals getGlobals() {
-        return globals;
+        return this.globalsHolder.getGlobals();
+    }
+
+    public GlobalsHolder getGlobalsHolder() {
+        return globalsHolder;
     }
 
     public Thread getThread() {
@@ -61,5 +67,9 @@ public class RunningScript {
 
     public LuaValue getChunk() {
         return chunk;
+    }
+
+    public boolean isForceStopped() {
+        return this.interruptDebugger.isInterrupted();
     }
 }
