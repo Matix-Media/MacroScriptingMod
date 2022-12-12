@@ -196,6 +196,15 @@ public class LibPlayer extends Lib {
         }
     }
 
+    public static class GetHotbarSlot extends LibZeroArgFunction {
+        @Override
+        public LuaValue call() {
+            if (this.getMinecraft().player == null) return null;
+
+            return LuaValue.valueOf(this.getMinecraft().player.getInventory().selectedSlot);
+        }
+    }
+
     public static class SelectHotbarSlot extends LibOneArgFunction {
         @Override
         public LuaValue call(LuaValue arg) {
