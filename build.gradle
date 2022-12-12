@@ -1,6 +1,8 @@
 plugins {
     id 'fabric-loom' version '1.0-SNAPSHOT'
     id 'maven-publish'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'java'
 }
 
 version = project.mod_version
@@ -29,6 +31,7 @@ dependencies {
 
     implementation "org.luaj:luaj-jse:3.0.1"
     implementation 'com.google.guava:guava:31.1-jre'
+    include "org.luaj:luaj-jse:3.0.1"
 }
 
 processResources {
