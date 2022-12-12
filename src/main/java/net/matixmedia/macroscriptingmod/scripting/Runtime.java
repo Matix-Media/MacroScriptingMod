@@ -2,7 +2,6 @@ package net.matixmedia.macroscriptingmod.scripting;
 
 import net.matixmedia.macroscriptingmod.api.scripting.Lib;
 import net.matixmedia.macroscriptingmod.eventsystem.EventManager;
-import net.matixmedia.macroscriptingmod.eventsystem.events.EventScriptEnd;
 import net.matixmedia.macroscriptingmod.eventsystem.events.EventScriptStop;
 import net.matixmedia.macroscriptingmod.exceptions.ScriptInterruptedException;
 import net.matixmedia.macroscriptingmod.utils.Chat;
@@ -114,7 +113,7 @@ public class Runtime {
                 }
             }
 
-            EventScriptStop event = new EventScriptStop(runningScript);
+            EventScriptStop event = new EventScriptStop.Pre(runningScript);
             EventManager.fire(event);
             if (!event.isCanceled()) runningScript.stop();
 
@@ -127,7 +126,7 @@ public class Runtime {
     public void removeSandbox(RunningScript runningScript) {
         LOGGER.info("Removing sandbox for " + runningScript.getUuid());
         this.runningScripts.remove(runningScript);
-        EventManager.fire(new EventScriptEnd(runningScript));
+        EventManager.fire(new EventScriptStop.Post(runningScript));
 
         for (LibFunction lib : runningScript.getGlobalsHolder().getLibraries()) if (lib instanceof Lib _lib) _lib.dispose();
     }

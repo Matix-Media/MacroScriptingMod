@@ -45,9 +45,14 @@ public class LibEvents extends Lib implements EventListener {
     }
 
     @EventHandler
-    public void onScriptStop(EventScriptStop event) {
+    public void onScriptStop(EventScriptStop.Pre event) {
         if (event.getRunningScript() == this.getRunningScript() && (this.useFunctionHandlers || this.listeners.size() > 0))
             event.cancel();
+    }
+
+    @EventHandler
+    public void onScriptFinallyStop(EventScriptStop.Post event) {
+        this.callEvent("on_script_end", new LuaValue[] {LuaValue.valueOf(event.getRunningScript().getUuid().toString())});
     }
 
     @EventHandler
@@ -91,7 +96,6 @@ public class LibEvents extends Lib implements EventListener {
 
             if (this.useFunctionHandlers) {
                 LuaValue functionHandler = this.getRunningScript().getGlobals().get(event);
-                System.out.println(functionHandler);
                 if (!functionHandler.isfunction()) return cancelEvent;
                 LuaValue result = functionHandler.invoke(args).arg1();
                 if (result.isboolean() && !result.checkboolean()) cancelEvent = true;
