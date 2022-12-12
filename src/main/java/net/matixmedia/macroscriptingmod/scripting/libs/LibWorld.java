@@ -312,7 +312,9 @@ public class LibWorld extends Lib implements EventListener {
             int z = arg3.checkint();
 
             BlockPos pos = new BlockPos(x, y, z);
-            instance.miningBlocks.add(pos);
+            synchronized (instance.miningBlocks) {
+                instance.miningBlocks.add(pos);
+            }
             return null;
         }
     }
