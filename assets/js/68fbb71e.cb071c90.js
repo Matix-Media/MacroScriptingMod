@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkmacroscriptingmod_docs=self.webpackChunkmacroscriptingmod_docs||[]).push([[377],{3769:s=>{s.exports=JSON.parse('{"name":"docusaurus-plugin-content-docs","id":"default"}')}}]);
