@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkmacroscriptingmod_docs=self.webpackChunkmacroscriptingmod_docs||[]).push([[907],{427:o=>{o.exports=JSON.parse('{"permalink":"/macroscriptingmod/blog","page":1,"postsPerPage":10,"totalPages":1,"totalCount":1,"blogDescription":"Blog","blogTitle":"Blog"}')}}]);
