@@ -1,6 +1,7 @@
 package net.matixmedia.macroscriptingmod.scripting.libs;
 
 import net.matixmedia.macroscriptingmod.MacroScriptingMod;
+import net.matixmedia.macroscriptingmod.api.scripting.AutoLibFunction;
 import net.matixmedia.macroscriptingmod.api.scripting.Lib;
 import net.matixmedia.macroscriptingmod.api.scripting.LibArgFunction;
 import net.matixmedia.macroscriptingmod.api.scripting.LibZeroArgFunction;
@@ -31,6 +32,7 @@ public class LibServer extends Lib {
         super("server");
     }
 
+    @AutoLibFunction
     public static class Reconnect extends LibZeroArgFunction {
         @Override
         public LuaValue call() {
@@ -43,6 +45,7 @@ public class LibServer extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class GetOnlinePlayers extends LibZeroArgFunction {
         @Override
         public LuaValue call() {

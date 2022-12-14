@@ -12,6 +12,7 @@
     "MixinClientPlayerEntity",
     "MixinDisconnectedScreen",
     "MixinGameRenderer",
+    "MixinInGameHud",
     "MixinMultiplayerScreen",
     "MixinScreen",
     "MixinWorldRenderer"

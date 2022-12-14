@@ -20,7 +20,7 @@ public abstract class MixinMultiplayerScreen {
         EventConnectToServer event = new EventConnectToServer(entry);
         EventManager.fire(event);
 
-        if (event.isCanceled()) ci.cancel();
+        if (event.isCancelled()) ci.cancel();
     }
 
 }

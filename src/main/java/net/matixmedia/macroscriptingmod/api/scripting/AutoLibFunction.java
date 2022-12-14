@@ -1,4 +1,4 @@
-package net.matixmedia.macroscriptingmod.eventsystem;
+package net.matixmedia.macroscriptingmod.api.scripting;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -6,6 +6,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface EventHandler {
+@Target(ElementType.TYPE)
+public @interface AutoLibFunction {
 }

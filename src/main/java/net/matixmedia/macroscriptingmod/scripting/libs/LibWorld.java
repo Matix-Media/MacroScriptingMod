@@ -120,6 +120,7 @@ public class LibWorld extends Lib implements EventListener {
         }
     }
 
+    @AutoLibFunction
     public static class GetBlock extends ThreeArgFunction {
         @Override
         public LuaValue call(LuaValue x, LuaValue y, LuaValue z) {
@@ -138,6 +139,7 @@ public class LibWorld extends Lib implements EventListener {
         }
     }
 
+    @AutoLibFunction
     public static class GetBlockRelative extends ThreeArgFunction {
         @Override
         public LuaValue call(LuaValue x, LuaValue y, LuaValue z) {
@@ -156,6 +158,7 @@ public class LibWorld extends Lib implements EventListener {
         }
     }
 
+    @AutoLibFunction
     public static class GetNearbyEntities extends LibOneArgFunction {
         @Override
         public LuaValue call(LuaValue arg) {
@@ -181,6 +184,7 @@ public class LibWorld extends Lib implements EventListener {
         }
     }
 
+    @AutoLibFunction
     public static class GetEntities extends LibZeroArgFunction {
         @Override
         public LuaValue call() {
@@ -192,6 +196,7 @@ public class LibWorld extends Lib implements EventListener {
         }
     }
 
+    @AutoLibFunction
     public static class ShowEspBox extends LibArgFunction {
         @Override
         public Varargs invoke(Varargs args) {
@@ -228,6 +233,7 @@ public class LibWorld extends Lib implements EventListener {
         }
     }
 
+    @AutoLibFunction
     public static class RemoveEspBox extends LibOneArgFunction {
         @Override
         public LuaValue call(LuaValue arg) {
@@ -247,6 +253,7 @@ public class LibWorld extends Lib implements EventListener {
         }
     }
 
+    @AutoLibFunction
     public static class ShowTracer extends LibArgFunction {
         @Override
         public Varargs invoke(Varargs args) {
@@ -279,6 +286,7 @@ public class LibWorld extends Lib implements EventListener {
         }
     }
 
+    @AutoLibFunction
     public static class RemoveTracer extends LibOneArgFunction {
         @Override
         public LuaValue call(LuaValue arg) {
@@ -298,6 +306,7 @@ public class LibWorld extends Lib implements EventListener {
         }
     }
 
+    @AutoLibFunction
     public static class BreakBlock extends LibThreeArgFunction {
         @Override
         public LuaValue call(LuaValue arg1, LuaValue arg2, LuaValue arg3) {
@@ -319,6 +328,7 @@ public class LibWorld extends Lib implements EventListener {
         }
     }
 
+    @AutoLibFunction
     public static class CalcYawPitchTo extends LibThreeArgFunction {
         @Override
         public LuaValue call(LuaValue arg1, LuaValue arg2, LuaValue arg3) {

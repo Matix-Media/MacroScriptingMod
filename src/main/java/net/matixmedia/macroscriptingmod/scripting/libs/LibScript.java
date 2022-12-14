@@ -1,10 +1,7 @@
 package net.matixmedia.macroscriptingmod.scripting.libs;
 
 import net.matixmedia.macroscriptingmod.MacroScriptingMod;
-import net.matixmedia.macroscriptingmod.api.scripting.Lib;
-import net.matixmedia.macroscriptingmod.api.scripting.LibArgFunction;
-import net.matixmedia.macroscriptingmod.api.scripting.LibOneArgFunction;
-import net.matixmedia.macroscriptingmod.api.scripting.LibZeroArgFunction;
+import net.matixmedia.macroscriptingmod.api.scripting.*;
 import net.matixmedia.macroscriptingmod.exceptions.ScriptException;
 import net.matixmedia.macroscriptingmod.scripting.RunningScript;
 import net.matixmedia.macroscriptingmod.scripting.Runtime;
@@ -24,6 +21,7 @@ public class LibScript extends Lib {
         super("script");
     }
 
+    @AutoLibFunction
     public static class Run extends LibOneArgFunction {
         @Override
         public LuaValue call(LuaValue arg) {
@@ -45,6 +43,7 @@ public class LibScript extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class Stop extends LibOneArgFunction {
         @Override
         public LuaValue call(LuaValue arg) {
@@ -61,6 +60,7 @@ public class LibScript extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class GetRunningScripts extends LibArgFunction {
         @Override
         public Varargs invoke(Varargs args) {

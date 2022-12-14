@@ -32,6 +32,7 @@ public class LibPlayer extends Lib {
         super("player");
     }
 
+    @AutoLibFunction
     public static class GetInfo extends LibZeroArgFunction {
         @Override
         public LuaValue call() {
@@ -42,6 +43,7 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class GetLocation extends ZeroArgFunction {
         @Override
         public LuaValue call() {
@@ -52,6 +54,7 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class GetGamemode extends ZeroArgFunction {
         @Override
         public LuaValue call() {
@@ -64,6 +67,7 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class GetUsername extends LibZeroArgFunction {
         @Override
         public LuaValue call() {
@@ -73,6 +77,7 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class GetUuid extends LibZeroArgFunction {
         @Override
         public LuaValue call() {
@@ -82,6 +87,7 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class GetHealth extends LibZeroArgFunction {
         @Override
         public LuaValue call() {
@@ -91,6 +97,7 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class GetHunger extends LibZeroArgFunction {
         @Override
         public LuaValue call() {
@@ -100,6 +107,7 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class GetXpLevel extends LibZeroArgFunction {
         @Override
         public LuaValue call() {
@@ -109,6 +117,7 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class GetXp extends LibZeroArgFunction {
         @Override
         public LuaValue call() {
@@ -118,6 +127,7 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class GetTotalXp extends LibZeroArgFunction {
         @Override
         public LuaValue call() {
@@ -127,6 +137,7 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class GetOxygen extends LibZeroArgFunction {
         @Override
         public LuaValue call() {
@@ -136,6 +147,7 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class IsFlying extends LibZeroArgFunction {
         @Override
         public LuaValue call() {
@@ -145,6 +157,7 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class CanFly extends LibZeroArgFunction {
         @Override
         public LuaValue call() {
@@ -154,6 +167,7 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class GetDistanceTo extends LibThreeArgFunction {
         @Override
         public LuaValue call(LuaValue arg1, LuaValue arg2, LuaValue arg3) {
@@ -166,6 +180,7 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class FindItem extends LibOneArgFunction {
         @Override
         public LuaValue call(LuaValue arg) {
@@ -184,6 +199,7 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class GetItem extends LibOneArgFunction {
         @Override
         public LuaValue call(LuaValue arg) {
@@ -196,6 +212,7 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class GetHotbarSlot extends LibZeroArgFunction {
         @Override
         public LuaValue call() {
@@ -205,6 +222,7 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class SelectHotbarSlot extends LibOneArgFunction {
         @Override
         public LuaValue call(LuaValue arg) {
@@ -218,6 +236,7 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class Tellraw extends LibOneArgFunction {
         @Override
         public LuaValue call(LuaValue arg) {
@@ -228,6 +247,7 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class GetYaw extends LibZeroArgFunction {
         @Override
         public LuaValue call() {
@@ -236,6 +256,7 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class GetPitch extends LibZeroArgFunction {
         @Override
         public LuaValue call() {
@@ -244,6 +265,7 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class Look extends LibTwoArgFunction {
         @Override
         public LuaValue call(LuaValue arg1, LuaValue arg2) {
@@ -258,6 +280,7 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class LookSmooth extends LibThreeArgFunction {
         @Override
         public LuaValue call(LuaValue arg1, LuaValue arg2, LuaValue arg3) {
@@ -312,8 +335,5 @@ public class LibPlayer extends Lib {
 
             return null;
         }
-
     }
-
-
 }

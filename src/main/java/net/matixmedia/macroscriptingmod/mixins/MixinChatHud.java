@@ -4,14 +4,11 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.matixmedia.macroscriptingmod.eventsystem.EventManager;
 import net.matixmedia.macroscriptingmod.eventsystem.events.EventChatMessage;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.gui.hud.MessageIndicator;
 import net.minecraft.network.message.MessageSignatureData;
 import net.minecraft.text.Text;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -27,7 +24,7 @@ public abstract class MixinChatHud {
         EventChatMessage.Receive event = new EventChatMessage.Receive(chatMessage.getString());
         EventManager.fire(event);
 
-        if (event.isCanceled()) {
+        if (event.isCancelled()) {
             cb.cancel();
             return;
         }

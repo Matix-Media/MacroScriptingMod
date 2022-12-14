@@ -8,11 +8,9 @@ import net.minecraft.SharedConstants;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Style;
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Environment(EnvType.CLIENT)
@@ -26,7 +24,7 @@ public abstract class MixinScreen {
             if (!command.startsWith(".")) return;
             EventChatMessage.Send event = new EventChatMessage.Send(command);
             EventManager.fire(event);
-            if (!event.isCanceled()) return;
+            if (!event.isCancelled()) return;
             cb.cancel();
             cb.setReturnValue(true);
         }

@@ -53,11 +53,10 @@ public abstract class Lib extends TwoArgFunction {
         LuaValue lib = tableOf();
         this.env = env;
         try {
-            Class<LibFunction> libFunctionClass = LibFunction.class;
-            Class<LibArgFunction> libArgFunctionClass = LibArgFunction.class;
             for (Class<?> implementedClasses : this.getClass().getClasses())  {
                 if (!Modifier.isStatic(implementedClasses.getModifiers())) continue;
-                if (!libFunctionClass.isAssignableFrom(implementedClasses)) continue;
+                if (!LibFunction.class.isAssignableFrom(implementedClasses)) continue;
+                if (implementedClasses.getAnnotation(AutoLibFunction.class) == null) continue;
 
                 String functionName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, implementedClasses.getSimpleName());
 
@@ -68,7 +67,7 @@ public abstract class Lib extends TwoArgFunction {
                     break;
                 }
                 if (instance == null) continue;
-                if (libArgFunctionClass.isAssignableFrom(implementedClasses))
+                if (LibArgFunction.class.isAssignableFrom(implementedClasses))
                     ((LibArgFunction) instance).setRunningScript(this.runningScript);
 
                 LOGGER.info("Registered " + libraryName + "#" + functionName);

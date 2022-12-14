@@ -1,6 +1,7 @@
 package net.matixmedia.macroscriptingmod.scripting.libs;
 
 import net.matixmedia.macroscriptingmod.api.scripting.Lib;
+import net.matixmedia.macroscriptingmod.api.scripting.AutoLibFunction;
 import net.matixmedia.macroscriptingmod.api.scripting.LibTwoArgFunction;
 import net.matixmedia.macroscriptingmod.api.scripting.LibZeroArgFunction;
 import net.matixmedia.macroscriptingmod.eventsystem.EventHandler;
@@ -74,6 +75,12 @@ public class LibEvents extends Lib implements EventListener {
     }
 
     @EventHandler
+    public void onTitle(EventTitle event) {
+        boolean cancelled = this.callEvent("on_" + event.getTitleType().name().toLowerCase(), new LuaValue[] {LuaValue.valueOf(event.getContent())});
+        if (cancelled) event.cancel();
+    }
+
+    @EventHandler
     public void onDisconnect(EventDisconnect event) {
         this.callEvent("on_disconnect", new LuaValue[] {LuaValue.valueOf(event.getReason())});
     }
@@ -113,6 +120,7 @@ public class LibEvents extends Lib implements EventListener {
         return cancelEvent;
     }
 
+    @AutoLibFunction
     public static class UseFunctionHandlers extends LibZeroArgFunction {
         @Override
         public LuaValue call() {
@@ -125,6 +133,7 @@ public class LibEvents extends Lib implements EventListener {
         }
     }
 
+    @AutoLibFunction
     public static class Register extends LibTwoArgFunction {
         @Override
         public LuaValue call(LuaValue arg1, LuaValue arg2) {

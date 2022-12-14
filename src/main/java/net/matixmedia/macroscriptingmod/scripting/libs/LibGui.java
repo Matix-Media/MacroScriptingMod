@@ -1,5 +1,6 @@
 package net.matixmedia.macroscriptingmod.scripting.libs;
 
+import net.matixmedia.macroscriptingmod.api.scripting.AutoLibFunction;
 import net.matixmedia.macroscriptingmod.api.scripting.Lib;
 import net.matixmedia.macroscriptingmod.api.scripting.LibOneArgFunction;
 import net.matixmedia.macroscriptingmod.api.scripting.LibZeroArgFunction;
@@ -136,6 +137,7 @@ public class LibGui extends Lib implements EventListener {
         }
     }
 
+    @AutoLibFunction
     public static class GetCurrentGui extends LibZeroArgFunction {
         @Override
         public LuaValue call() {
@@ -159,6 +161,7 @@ public class LibGui extends Lib implements EventListener {
         }
     }
 
+    @AutoLibFunction
     public static class Open extends LibOneArgFunction {
         @Override
         public LuaValue call(LuaValue arg) {
@@ -187,6 +190,7 @@ public class LibGui extends Lib implements EventListener {
         }
     }
 
+    @AutoLibFunction
     public static class CloseCurrentGui extends LibZeroArgFunction {
         @Override
         public LuaValue call() {
@@ -209,6 +213,7 @@ public class LibGui extends Lib implements EventListener {
         }
     }
 
+    @AutoLibFunction
     public static class FindItem extends LibOneArgFunction {
         @Override
         public LuaValue call(LuaValue arg) {
@@ -227,6 +232,7 @@ public class LibGui extends Lib implements EventListener {
         }
     }
 
+    @AutoLibFunction
     public static class GetItem extends LibOneArgFunction {
         @Override
         public LuaValue call(LuaValue arg) {

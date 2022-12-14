@@ -115,7 +115,7 @@ public class Runtime {
 
             EventScriptStop event = new EventScriptStop.Pre(runningScript);
             EventManager.fire(event);
-            if (!event.isCanceled()) runningScript.stop();
+            if (!event.isCancelled()) runningScript.stop();
 
             if (exception != null) throw exception;
 
