@@ -9,7 +9,7 @@ const config = {
     title: "MacroScriptingMod",
     tagline: "Learn all about the MacroScriptingMod",
     url: "https://matix-media.github.io",
-    baseUrl: "/macroscriptingmod",
+    baseUrl: "/MacroScriptingMod",
     onBrokenLinks: "throw",
     onBrokenMarkdownLinks: "warn",
     favicon: "img/favicon.ico",
