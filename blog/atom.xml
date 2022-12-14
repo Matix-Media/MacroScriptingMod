@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-    <id>https://matix-media.github.io/macroscriptingmod/blog</id>
+    <id>https://matix-media.github.io/MacroScriptingMod/blog</id>
     <title>MacroScriptingMod Blog</title>
     <updated>2022-12-14T00:00:00.000Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
-    <link rel="alternate" href="https://matix-media.github.io/macroscriptingmod/blog"/>
+    <link rel="alternate" href="https://matix-media.github.io/MacroScriptingMod/blog"/>
     <subtitle>MacroScriptingMod Blog</subtitle>
-    <icon>https://matix-media.github.io/macroscriptingmod/img/favicon.ico</icon>
+    <icon>https://matix-media.github.io/MacroScriptingMod/img/favicon.ico</icon>
     <entry>
         <title type="html"><![CDATA[Docs launched!]]></title>
         <id>/2022/12/14/docs-launched</id>
-        <link href="https://matix-media.github.io/macroscriptingmod/blog/2022/12/14/docs-launched"/>
+        <link href="https://matix-media.github.io/MacroScriptingMod/blog/2022/12/14/docs-launched"/>
         <updated>2022-12-14T00:00:00.000Z</updated>
         <summary type="html"><![CDATA[Today I can happily announce, that we launched our documentation. It's missing basically everything but it is now online.]]></summary>
         <content type="html"><![CDATA[<p>Today I can happily announce, that we launched our documentation. It's missing basically everything but it is now online.</p>]]></content>

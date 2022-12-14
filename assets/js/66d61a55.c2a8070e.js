@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkmacroscriptingmod_docs=self.webpackChunkmacroscriptingmod_docs||[]).push([[139],{3771:a=>{a.exports=JSON.parse('{"label":"update","permalink":"/macroscriptingmod/blog/tags/update","allTagsPath":"/macroscriptingmod/blog/tags","count":1}')}}]);
