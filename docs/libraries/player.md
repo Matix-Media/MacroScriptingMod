@@ -78,9 +78,10 @@ Returns the current player's experience level.
 print("Player is at level: " .. player.get_xp_level())
 ```
 
-### `get_total_xp()`
+### `get_xp()`
 
-Returns the current player's total experience.
+Returns the current player's experience.  
+Resets after each experience level reached.
 
 NOTE: This is not the number you see above your hotbar.
 
@@ -88,10 +89,9 @@ NOTE: This is not the number you see above your hotbar.
 print("Player is at level: " .. player.get_xp_level())
 ```
 
-### `get_xp()`
+### `get_total_xp()`
 
-Returns the current player's experience.  
-Resets after each experience level reached.
+Returns the current player's total experience.
 
 NOTE: This is not the number you see above your hotbar.
 
