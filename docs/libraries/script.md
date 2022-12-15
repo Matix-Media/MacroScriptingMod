@@ -46,7 +46,7 @@ Returns a list of all currently running scripts.
 The list contains the IDs of all the running scripts.
 
 ```lua title="example.lua"
-local running_scripts = script.get_running_scripts("")
+local running_scripts = script.get_running_scripts()
 
 for _, script in pairs(running_scripts) do
     print("Script with ID " .. script .. " is running")
