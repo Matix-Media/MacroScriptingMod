@@ -3,8 +3,6 @@ on:
   push:
     tags:
       - "v*"
-    branches:
-      - "master"
 
 jobs:
   tagged-release:
@@ -38,4 +36,4 @@ jobs:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
           files: |
-            *.jar
+            build/libs/*.jar

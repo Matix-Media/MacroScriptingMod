@@ -48,4 +48,4 @@ jobs:
           automatic_release_tag: "latest"
           title: "Latest Development Build [unstable]"
           files: |
-            *.jar
+            build/libs/*.jar
