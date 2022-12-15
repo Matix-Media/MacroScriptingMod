@@ -1,6 +1,6 @@
 ---
 tags:
-  - Lib
+    - Lib
 ---
 
 # Player
@@ -147,9 +147,9 @@ end
 
 **Arguments:**
 
-- `x`: X coordinate of block
-- `y`: Y coordinate of block
-- `z`: Z coordinate of block
+-   `x`: X coordinate of block
+-   `y`: Y coordinate of block
+-   `z`: Z coordinate of block
 
 Returns the distance between the current player's eyes and the specified location.
 
@@ -168,6 +168,8 @@ Returns `NIL` if the argument is not valid or the item is not found in inventory
 
 If searching for a vanilla item, do not forget to put `minecraft:` before the item-name!
 
+Slots are 0-based. Meaning that the first slot is 0, the second 1 and so on.
+
 :::
 
 ```lua title="example.lua"
@@ -179,6 +181,12 @@ print(player.find_item("minecraft:wheat"))
 Returns the item, placed in the specified slot of the current player's inventory.
 
 The returned object contains the item's `type`, `amount`, `lore` and `name`.
+
+:::tip
+
+Slots are 0-based. Meaning that the first slot is 0, the second 1 and so on.
+
+:::
 
 ```lua title="example.lua"
 local item = player.get_item(10)
@@ -196,6 +204,12 @@ print(item.amount)
 ### `select_hotbar_slot()`
 
 Selects the specified slot of the current player's hotbar.
+
+:::tip
+
+Slots are 0-based. Meaning that the first slot is 0, the second 1 and so on.
+
+:::
 
 ```lua title="example.lua"
 player.select_hotbar_slot(4)
@@ -221,8 +235,8 @@ print(player.get_pitch())
 
 **Arguments:**
 
-- `yaw`: the yaw, the player should look at. Should be between -180 and 180.
-- `pitch`: the pitch, the player should look at. Should be between -90 and 90.
+-   `yaw`: the yaw, the player should look at. Should be between -180 and 180.
+-   `pitch`: the pitch, the player should look at. Should be between -90 and 90.
 
 Sets the player's HeadYaw and pitch to the specified values.
 
@@ -234,9 +248,9 @@ player.look(45,7)
 
 **Arguments:**
 
-- `yaw`: the yaw, the player should look at. Should be between -180 and 180.
-- `pitch`: the pitch, the player should look at. Should be between -90 and 90.
-- `seconds`: the time it should take to smooth look from current HeadYaw and pitch to the specified ones.
+-   `yaw`: the yaw, the player should look at. Should be between -180 and 180.
+-   `pitch`: the pitch, the player should look at. Should be between -90 and 90.
+-   `seconds`: the time it should take to smooth look from current HeadYaw and pitch to the specified ones.
 
 Smoothly turns the player's HeadYaw and pitch to the specified values.
 
