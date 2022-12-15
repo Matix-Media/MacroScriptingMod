@@ -187,6 +187,10 @@ public class Chat {
     }
 
     public static void sendClientMessage(String message) {
-        MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(Text.literal(message));
+        Chat.sendClientMessage(Text.literal(message));
+    }
+
+    public static void sendClientMessage(Text text) {
+        MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(text);
     }
 }

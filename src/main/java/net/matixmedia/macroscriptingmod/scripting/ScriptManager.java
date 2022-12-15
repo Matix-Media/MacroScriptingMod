@@ -20,7 +20,7 @@ public class ScriptManager {
             return scripts.get(scriptPath.toString());
         } else {
             File scriptFile = scriptPath.toFile();
-            if (!scriptFile.exists()) return null;
+            if (!scriptFile.exists() || !scriptFile.isFile()) return null;
             Script script = new Script(scriptFile);
             scripts.put(scriptPath.toString(), script);
             return script;

@@ -8,9 +8,13 @@
   "client": [
     "AccessorClientPlayerInteractionManager",
     "AccessorKeyBinding",
+    "MixinChatHud",
     "MixinClientPlayerEntity",
+    "MixinDisconnectedScreen",
     "MixinGameRenderer",
+    "MixinInGameHud",
     "MixinMultiplayerScreen",
+    "MixinScreen",
     "MixinWorldRenderer"
   ],
   "injectors": {

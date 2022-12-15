@@ -1,13 +1,13 @@
 package net.matixmedia.macroscriptingmod.eventsystem;
 
 public abstract class CancellableEvent extends Event{
-    private boolean canceled;
+    private boolean cancelled;
 
     public void cancel() {
-        this.canceled = true;
+        this.cancelled = true;
     }
 
-    public boolean isCanceled() {
-        return this.canceled;
+    public boolean isCancelled() {
+        return this.cancelled;
     }
 }

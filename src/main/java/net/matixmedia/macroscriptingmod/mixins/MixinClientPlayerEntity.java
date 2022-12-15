@@ -48,7 +48,7 @@ public abstract class MixinClientPlayerEntity extends AbstractClientPlayerEntity
         EventChatMessage.Send event = new EventChatMessage.Send(message);
         EventManager.fire(event);
 
-        if(event.isCanceled())
+        if(event.isCancelled())
         {
             cb.cancel();
             return;

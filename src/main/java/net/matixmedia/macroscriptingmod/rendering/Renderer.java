@@ -2,12 +2,14 @@ package net.matixmedia.macroscriptingmod.rendering;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.matixmedia.macroscriptingmod.math.Boxes;
+import net.matixmedia.macroscriptingmod.rendering.color.LineColor;
 import net.matixmedia.macroscriptingmod.rendering.color.QuadColor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3f;
 
 public class Renderer {
@@ -44,6 +46,28 @@ public class Renderer {
         buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
         Vertexer.vertexBoxQuads(matrices, buffer, Boxes.moveToZero(box), color, excludeDirs);
         tessellator.draw();
+
+        this.cleanup();
+    }
+
+    public void line(double x1, double y1, double z1, double x2, double y2, double z2, LineColor color, float width) {
+        this.setup();
+
+        MatrixStack matrices = this.matrixFrom(x1, y1, z1);
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder buffer = tessellator.getBuffer();
+
+        RenderSystem.disableDepthTest();
+        RenderSystem.disableCull();
+        RenderSystem.setShader(GameRenderer::getRenderTypeLinesShader);
+        RenderSystem.lineWidth(width);
+
+        buffer.begin(VertexFormat.DrawMode.LINES, VertexFormats.LINES);
+        Vertexer.vertexLine(matrices, buffer, 0f, 0f, 0f, (float) (x2 - x1), (float) (y2 - y1), (float) (z2 - z1), color);
+        tessellator.draw();
+
+        RenderSystem.enableCull();
+        RenderSystem.enableDepthTest();
 
         this.cleanup();
     }

@@ -4,10 +4,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.matixmedia.macroscriptingmod.commandsystem.CommandManager;
-import net.matixmedia.macroscriptingmod.commandsystem.commands.CommandEval;
-import net.matixmedia.macroscriptingmod.commandsystem.commands.CommandRun;
-import net.matixmedia.macroscriptingmod.commandsystem.commands.CommandRunning;
-import net.matixmedia.macroscriptingmod.commandsystem.commands.CommandStop;
+import net.matixmedia.macroscriptingmod.commandsystem.commands.*;
 import net.matixmedia.macroscriptingmod.eventsystem.EventHandler;
 import net.matixmedia.macroscriptingmod.eventsystem.EventListener;
 import net.matixmedia.macroscriptingmod.eventsystem.events.EventConnectToServer;
@@ -79,6 +76,7 @@ public class MacroScriptingMod implements ClientModInitializer, EventListener {
         this.commandManager.registerCommand(new CommandRun(this.runtime, this.scriptManager));
         this.commandManager.registerCommand(new CommandStop(this.runtime));
         this.commandManager.registerCommand(new CommandRunning(this.runtime));
+        this.commandManager.registerCommand(new CommandHelp(this.commandManager, getChatPrefix()));
     }
 
     private void registerRuntime() {
@@ -101,6 +99,9 @@ public class MacroScriptingMod implements ClientModInitializer, EventListener {
         this.runtime.addLibrary(LibGui.class);
         this.runtime.addLibrary(LibServer.class);
         this.runtime.addLibrary(LibText.class);
+        this.runtime.addLibrary(LibScript.class);
+        this.runtime.addLibrary(LibEvents.class);
+
         this.runtime.addLibrary(InterruptDebugger.class);
     }
 
@@ -119,5 +120,9 @@ public class MacroScriptingMod implements ClientModInitializer, EventListener {
 
     public Runtime getRuntime() {
         return runtime;
+    }
+
+    public CommandManager getCommandManager() {
+        return commandManager;
     }
 }

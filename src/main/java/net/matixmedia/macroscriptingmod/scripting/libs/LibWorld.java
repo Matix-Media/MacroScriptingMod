@@ -12,6 +12,7 @@ import net.matixmedia.macroscriptingmod.eventsystem.events.EventTick;
 import net.matixmedia.macroscriptingmod.mixins.AccessorClientPlayerInteractionManager;
 import net.matixmedia.macroscriptingmod.rendering.color.QuadColor;
 import net.matixmedia.macroscriptingmod.scripting.helpers.EspBox;
+import net.matixmedia.macroscriptingmod.scripting.helpers.Tracer;
 import net.minecraft.block.Block;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -33,6 +34,7 @@ import java.util.ListIterator;
 public class LibWorld extends Lib implements EventListener {
 
     private final List<EspBox> espBoxes = new ArrayList<>();
+    private final List<Tracer> tracers = new ArrayList<>();
     private final List<BlockPos> miningBlocks = new ArrayList<>();
 
     public LibWorld() {
@@ -56,11 +58,19 @@ public class LibWorld extends Lib implements EventListener {
         if (mc.world == null) return;
 
         synchronized (this.espBoxes) {
-            for (int i = 0; i < this.espBoxes.size(); i++) {
-                EspBox espBox = this.espBoxes.get(i);
-                if (espBox == null) continue;
-                espBox.render(event.getMatrices(), event.getTickDelta(), event.getLimitTime(), event.getCamera(), event.getGameRenderer(), event.getPositionMatrix());
+            synchronized (this.tracers) {
+                for (int i = 0; i < this.espBoxes.size(); i++) {
+                    EspBox espBox = this.espBoxes.get(i);
+                    if (espBox == null) continue;
+                    espBox.render(event.getMatrices(), event.getTickDelta(), event.getLimitTime(), event.getCamera(), event.getGameRenderer(), event.getPositionMatrix());
+                }
+                for (int i = 0; i < this.tracers.size(); i++) {
+                    Tracer tracer = this.tracers.get(i);
+                    if (tracer == null) continue;
+                    tracer.render(event.getMatrices(), event.getTickDelta(), event.getLimitTime(), event.getCamera(), event.getGameRenderer(), event.getPositionMatrix());
+                }
             }
+
         }
     }
 
@@ -79,6 +89,12 @@ public class LibWorld extends Lib implements EventListener {
             espBox.setDistance(distance);
         }
 
+        for (Tracer tracer : this.tracers) {
+            if (!tracer.isDistanceFalloff()) continue;
+            double distance = tracer.getTarget().distanceTo(mc.player.getPos());
+            tracer.setDistance(distance);
+        }
+
 
         synchronized (this.miningBlocks) {
             ListIterator<BlockPos> iterator = this.miningBlocks.listIterator();
@@ -92,16 +108,19 @@ public class LibWorld extends Lib implements EventListener {
                     continue;
                 }
 
-                mc.interactionManager.updateBlockBreakingProgress(pos, Direction.UP);
-                mc.player.swingHand(Hand.MAIN_HAND);
+                if (mc.interactionManager != null) {
+                    mc.interactionManager.updateBlockBreakingProgress(pos, Direction.UP);
+                    mc.player.swingHand(Hand.MAIN_HAND);
 
-                if (((AccessorClientPlayerInteractionManager) mc.interactionManager).getCurrentBreakingProgress() == 0F) {
-                    iterator.remove();
+                    if (((AccessorClientPlayerInteractionManager) mc.interactionManager).getCurrentBreakingProgress() == 0F) {
+                        iterator.remove();
+                    }
                 }
             }
         }
     }
 
+    @AutoLibFunction
     public static class GetBlock extends ThreeArgFunction {
         @Override
         public LuaValue call(LuaValue x, LuaValue y, LuaValue z) {
@@ -120,6 +139,7 @@ public class LibWorld extends Lib implements EventListener {
         }
     }
 
+    @AutoLibFunction
     public static class GetBlockRelative extends ThreeArgFunction {
         @Override
         public LuaValue call(LuaValue x, LuaValue y, LuaValue z) {
@@ -138,6 +158,7 @@ public class LibWorld extends Lib implements EventListener {
         }
     }
 
+    @AutoLibFunction
     public static class GetNearbyEntities extends LibOneArgFunction {
         @Override
         public LuaValue call(LuaValue arg) {
@@ -163,6 +184,7 @@ public class LibWorld extends Lib implements EventListener {
         }
     }
 
+    @AutoLibFunction
     public static class GetEntities extends LibZeroArgFunction {
         @Override
         public LuaValue call() {
@@ -174,34 +196,29 @@ public class LibWorld extends Lib implements EventListener {
         }
     }
 
+    @AutoLibFunction
     public static class ShowEspBox extends LibArgFunction {
         @Override
         public Varargs invoke(Varargs args) {
             LibWorld instance = (LibWorld) getInstance(LibWorld.class, this.getRunningScript());
             if (instance == null) return null;
+            String errorMessage = "Invalid amount of arguments (valid is 6 or 9)";
+
+            if (args.narg() < 3) return argerror(errorMessage);
+            double minX = args.arg1().checkdouble();
+            double minY = args.arg(2).checkdouble();
+            double minZ = args.arg(3).checkdouble();
+
+            double maxX = args.arg(4).checkdouble();
+            double maxY = args.arg(5).checkdouble();
+            double maxZ = args.arg(6).checkdouble();
 
             if (args.narg() == 6) {
-                double minX = args.arg1().checkdouble();
-                double minY = args.arg(2).checkdouble();
-                double minZ = args.arg(3).checkdouble();
-
-                double maxX = args.arg(4).checkdouble();
-                double maxY = args.arg(5).checkdouble();
-                double maxZ = args.arg(6).checkdouble();
-
                 EspBox espBox = new EspBox(minX, minY, minZ, maxX, maxY, maxZ);
                 instance.espBoxes.add(espBox);
 
                 return LuaValue.valueOf(espBox.getUuid().toString());
             } else if (args.narg() == 9) {
-                double minX = args.arg1().checkdouble();
-                double minY = args.arg(2).checkdouble();
-                double minZ = args.arg(3).checkdouble();
-
-                double maxX = args.arg(4).checkdouble();
-                double maxY = args.arg(5).checkdouble();
-                double maxZ = args.arg(6).checkdouble();
-
                 int red = args.arg(7).checkint();
                 int green = args.arg(8).checkint();
                 int blue = args.arg(9).checkint();
@@ -212,10 +229,11 @@ public class LibWorld extends Lib implements EventListener {
                 return LuaValue.valueOf(espBox.getUuid().toString());
             }
 
-            return argerror(1,"Invalid amount of arguments (valid is 6 or 9)");
+            return argerror(errorMessage);
         }
     }
 
+    @AutoLibFunction
     public static class RemoveEspBox extends LibOneArgFunction {
         @Override
         public LuaValue call(LuaValue arg) {
@@ -235,6 +253,60 @@ public class LibWorld extends Lib implements EventListener {
         }
     }
 
+    @AutoLibFunction
+    public static class ShowTracer extends LibArgFunction {
+        @Override
+        public Varargs invoke(Varargs args) {
+            LibWorld instance = (LibWorld) getInstance(LibWorld.class, this.getRunningScript());
+            if (instance == null) return null;
+            String err = "Invalid amount of arguments (valid is 3 or 6)";
+
+            if (args.narg() < 3) return argerror(err);
+            double x = args.arg1().checkdouble();
+            double y = args.arg(2).checkdouble();
+            double z = args.arg(3).checkdouble();
+
+            if (args.narg() == 3) {
+                Tracer tracer = new Tracer(x, y, z);
+                instance.tracers.add(tracer);
+
+                return LuaValue.valueOf(tracer.getUuid().toString());
+            } else if (args.narg() == 6) {
+                int red = args.arg(4).checkint();
+                int green = args.arg(5).checkint();
+                int blue = args.arg(6).checkint();
+
+                Tracer tracer = new Tracer(x, y, z, red, green, blue);
+                instance.tracers.add(tracer);
+
+                return LuaValue.valueOf(tracer.getUuid().toString());
+            }
+
+            return argerror(err);
+        }
+    }
+
+    @AutoLibFunction
+    public static class RemoveTracer extends LibOneArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg) {
+            LibWorld instance = (LibWorld) getInstance(LibWorld.class, this.getRunningScript());
+            if (instance == null) return null;
+            String tracerId = arg.checkjstring();
+
+            ListIterator<Tracer> iterator = instance.tracers.listIterator();
+            while (iterator.hasNext()) {
+                Tracer tracer = iterator.next();
+                if (tracer.getUuid().toString().equals(tracerId)) {
+                    iterator.remove();
+                    break;
+                }
+            }
+            return null;
+        }
+    }
+
+    @AutoLibFunction
     public static class BreakBlock extends LibThreeArgFunction {
         @Override
         public LuaValue call(LuaValue arg1, LuaValue arg2, LuaValue arg3) {
@@ -249,11 +321,14 @@ public class LibWorld extends Lib implements EventListener {
             int z = arg3.checkint();
 
             BlockPos pos = new BlockPos(x, y, z);
-            instance.miningBlocks.add(pos);
+            synchronized (instance.miningBlocks) {
+                instance.miningBlocks.add(pos);
+            }
             return null;
         }
     }
 
+    @AutoLibFunction
     public static class CalcYawPitchTo extends LibThreeArgFunction {
         @Override
         public LuaValue call(LuaValue arg1, LuaValue arg2, LuaValue arg3) {

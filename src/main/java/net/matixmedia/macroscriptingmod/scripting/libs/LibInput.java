@@ -1,5 +1,6 @@
 package net.matixmedia.macroscriptingmod.scripting.libs;
 
+import net.matixmedia.macroscriptingmod.api.scripting.AutoLibFunction;
 import net.matixmedia.macroscriptingmod.api.scripting.Lib;
 import net.matixmedia.macroscriptingmod.api.scripting.LibOneArgFunction;
 import net.matixmedia.macroscriptingmod.eventsystem.EventHandler;
@@ -71,6 +72,7 @@ public class LibInput extends Lib implements EventListener {
         }
     }
 
+    @AutoLibFunction
     public static class KeyDown extends LibOneArgFunction {
         @Override
         public LuaValue call(LuaValue arg) {
@@ -91,6 +93,7 @@ public class LibInput extends Lib implements EventListener {
         }
     }
 
+    @AutoLibFunction
     public static class KeyUp extends LibOneArgFunction {
         @Override
         public LuaValue call(LuaValue arg) {
@@ -110,6 +113,7 @@ public class LibInput extends Lib implements EventListener {
         }
     }
 
+    @AutoLibFunction
     public static class PressKey extends LibOneArgFunction {
         @Override
         public LuaValue call(LuaValue arg) {

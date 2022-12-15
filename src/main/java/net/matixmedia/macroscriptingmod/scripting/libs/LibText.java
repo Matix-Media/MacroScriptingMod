@@ -1,5 +1,6 @@
 package net.matixmedia.macroscriptingmod.scripting.libs;
 
+import net.matixmedia.macroscriptingmod.api.scripting.AutoLibFunction;
 import net.matixmedia.macroscriptingmod.api.scripting.Lib;
 import net.matixmedia.macroscriptingmod.api.scripting.LibOneArgFunction;
 import net.matixmedia.macroscriptingmod.utils.Chat;
@@ -10,6 +11,7 @@ public class LibText extends Lib {
         super("text");
     }
 
+    @AutoLibFunction
     public static class Trim extends LibOneArgFunction {
         @Override
         public LuaValue call(LuaValue arg) {
@@ -18,6 +20,7 @@ public class LibText extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class StripColorCodes extends LibOneArgFunction {
         @Override
         public LuaValue call(LuaValue arg) {
