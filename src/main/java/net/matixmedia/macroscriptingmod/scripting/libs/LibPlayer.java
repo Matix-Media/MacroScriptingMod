@@ -290,5 +290,101 @@ public class LibPlayer extends Lib {
 
     }
 
+    public static class LookRelative extends LibTwoArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg1, LuaValue arg2) {
+            if (this.getMinecraft().player ==  null) return null;
+            double yaw = arg1.checkdouble() + this.getMinecraft().player.getHeadYaw();
+            double pitch = arg2.checkdouble() + this.getMinecraft().player.getPitch();
+            if (yaw > 180) {
+                while (true) {
+                    yaw -= 360;
+                    if(yaw >= -180 && yaw <= 180) break;
+                }
+            }
+            if (yaw < -180) {
+                while (true) {
+                    yaw += 360;
+                    if(yaw >= -180 && yaw <= 180) break;
+                }
+            }
+            pitch = MathHelper.clamp(pitch,-90,90);
+            yaw = MathHelper.clamp(yaw,-180,180);
+            this.getMinecraft().player.setYaw((float) yaw);
+            this.getMinecraft().player.setPitch((float) pitch);
+            return null;
+        }
+    }
+
+
+    public static class LookSmoothRelative extends LibThreeArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg1, LuaValue arg2, LuaValue arg3) {
+            if (this.getMinecraft().player ==  null) return null;
+            MinecraftClient mc = this.getMinecraft();
+            double yawWanted = arg1.checkdouble() + mc.player.getHeadYaw();
+            double pitchWanted = arg2.checkdouble() + mc.player.getPitch();
+            double seconds = arg3.checkdouble();
+            double steps = seconds * 100;
+            double yaw = mc.player.getHeadYaw();
+            double pitch = mc.player.getPitch();
+            if (yawWanted > 180) {
+                while (true) {
+                    yawWanted -= 360;
+                    if(yawWanted >= -180 && yawWanted <= 180) break;
+                }
+            }
+            if (yawWanted < -180) {
+                while (true) {
+                    yawWanted += 360;
+                    if(yawWanted >= -180 && yawWanted <= 180) break;
+                }
+            }
+            yawWanted = MathHelper.clamp(yawWanted,-180,180);
+            pitchWanted = MathHelper.clamp(pitchWanted,-90,90);
+
+            if (yaw < 0) yaw += 360;
+            if (yawWanted < 0) yawWanted += 360;
+
+            pitch += 90;
+            pitchWanted += 90;
+
+            double yawDiff = yawWanted - yaw;
+            double pitchDiff = pitchWanted - pitch;
+
+            if (yawDiff > 180) yawDiff -= 360;
+            else if (yawDiff < -180) yawDiff += 360;
+
+            double yawStep = yawDiff / steps;
+            double pitchStep = pitchDiff / steps;
+
+            double savedYaw = mc.player.getHeadYaw();
+            double savedPitch = mc.player.getPitch();
+            for (int i = 0; i < steps; i++) {
+                double toBeSetYaw = savedYaw + yawStep;
+                double toBeSetPitch = savedPitch + pitchStep;
+
+                if (toBeSetYaw > 180) toBeSetYaw -= 360;
+                else if (toBeSetYaw < -180) toBeSetYaw += 360;
+
+                mc.player.setYaw((float) (toBeSetYaw));
+                mc.player.setPitch((float) (toBeSetPitch));
+                savedYaw = toBeSetYaw;
+                savedPitch = toBeSetPitch;
+
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            mc.player.setYaw((float) yawWanted);
+            mc.player.setPitch((float) pitchWanted - 90);
+
+            return null;
+        }
+
+    }
+
 
 }
