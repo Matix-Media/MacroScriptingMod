@@ -8,6 +8,17 @@ tags:
 
 Let's discover the **creation and execution of a script**.
 
+:::info
+
+It is advised to learn the basics of Lua before getting into scripting.  
+Here are some helpful resources to get you started:
+
+-   [Learn Lua in 15 Minutes](https://learnxinyminutes.com/docs/lua/)
+-   [Programming in Lua](https://www.lua.org/pil/1.html)
+-   [Learn Lua in one video](https://www.youtube.com/watch?v=iMacxZQMPXs)
+
+:::
+
 ## Creating a script
 
 To write a script, you must create a file with the extension `.lua` in the `scripts` directory inside your `.minecraft` directory.
