@@ -2,11 +2,25 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://matix-media.github.io/MacroScriptingMod/blog</id>
     <title>MacroScriptingMod Blog</title>
-    <updated>2022-12-14T00:00:00.000Z</updated>
+    <updated>2022-12-15T00:00:00.000Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://matix-media.github.io/MacroScriptingMod/blog"/>
     <subtitle>MacroScriptingMod Blog</subtitle>
     <icon>https://matix-media.github.io/MacroScriptingMod/img/favicon.ico</icon>
+    <entry>
+        <title type="html"><![CDATA[Docs Up-To-Date!]]></title>
+        <id>/2022/12/15/docs-updated</id>
+        <link href="https://matix-media.github.io/MacroScriptingMod/blog/2022/12/15/docs-updated"/>
+        <updated>2022-12-15T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[We have successfully updated the documentation so it now contains all Libs MacroScriptingMod currently features. We are planing on adding some example-scripts and explanations very soon.]]></summary>
+        <content type="html"><![CDATA[<p>We have successfully updated the documentation so it now contains all Libs MacroScriptingMod currently features. We are planing on adding some example-scripts and explanations very soon.<br>
+<!-- -->Of course we will also keep on updading the documentation whenever we update MacroScriptingMod.</p>]]></content>
+        <author>
+            <name>CRYSTAL</name>
+            <uri>https://github.com/C-R-Y-S-T-A-L</uri>
+        </author>
+        <category label="update" term="update"/>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Docs launched!]]></title>
         <id>/2022/12/14/docs-launched</id>

@@ -4,10 +4,20 @@
         <title>MacroScriptingMod Blog</title>
         <link>https://matix-media.github.io/MacroScriptingMod/blog</link>
         <description>MacroScriptingMod Blog</description>
-        <lastBuildDate>Wed, 14 Dec 2022 00:00:00 GMT</lastBuildDate>
+        <lastBuildDate>Thu, 15 Dec 2022 00:00:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
+        <item>
+            <title><![CDATA[Docs Up-To-Date!]]></title>
+            <link>https://matix-media.github.io/MacroScriptingMod/blog/2022/12/15/docs-updated</link>
+            <guid>/2022/12/15/docs-updated</guid>
+            <pubDate>Thu, 15 Dec 2022 00:00:00 GMT</pubDate>
+            <description><![CDATA[We have successfully updated the documentation so it now contains all Libs MacroScriptingMod currently features. We are planing on adding some example-scripts and explanations very soon.]]></description>
+            <content:encoded><![CDATA[<p>We have successfully updated the documentation so it now contains all Libs MacroScriptingMod currently features. We are planing on adding some example-scripts and explanations very soon.<br>
+<!-- -->Of course we will also keep on updading the documentation whenever we update MacroScriptingMod.</p>]]></content:encoded>
+            <category>update</category>
+        </item>
         <item>
             <title><![CDATA[Docs launched!]]></title>
             <link>https://matix-media.github.io/MacroScriptingMod/blog/2022/12/14/docs-launched</link>

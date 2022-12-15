@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkmacroscriptingmod_docs=self.webpackChunkmacroscriptingmod_docs||[]).push([[535],{5641:c=>{c.exports=JSON.parse('{"title":"Recent posts","items":[{"title":"Docs Up-To-Date!","permalink":"/MacroScriptingMod/blog/2022/12/15/docs-updated"},{"title":"Docs launched!","permalink":"/MacroScriptingMod/blog/2022/12/14/docs-launched"}]}')}}]);
