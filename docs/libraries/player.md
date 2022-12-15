@@ -83,7 +83,11 @@ print("Player is at level: " .. player.get_xp_level())
 Returns the current player's experience.  
 Resets after each experience level reached.
 
-NOTE: This is not the number you see above your hotbar.
+:::info
+
+This is not the number you see above your hotbar.
+
+:::
 
 ```lua title="example.lua"
 print("Player is at level: " .. player.get_xp_level())
@@ -93,7 +97,11 @@ print("Player is at level: " .. player.get_xp_level())
 
 Returns the current player's total experience.
 
-NOTE: This is not the number you see above your hotbar.
+:::info
+
+This is not the number you see above your hotbar.
+
+:::
 
 ```lua title="example.lua"
 print("Player is at level: " .. player.get_xp_level())
