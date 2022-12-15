@@ -243,3 +243,30 @@ Smoothly turns the player's HeadYaw and pitch to the specified values.
 ```lua title="example.lua"
 player.look_smooth(45,7)
 ```
+
+### `look_relative(yawIncrease, pitchIncrease)`
+
+**Arguments:**
+
+- `yaw`: the increase in the player's yaw wanted. Can be a negative number.
+- `pitch`: the increase in the player's pitch wanted. Can be a negative number.
+
+Increases the player's HeadYaw and pitch by the specified values.
+
+```lua title="example.lua"
+player.look_relative(45,7)
+```
+
+### `look_smooth_relative(yawIncrease, pitchIncrease, seconds)`
+
+**Arguments:**
+
+- `yaw`: the increase in the player's yaw wanted. Can be a negative number.
+- `pitch`: the increase in the player's pitch wanted. Can be a negative number.
+- `seconds`: the time it should take to smooth look from current HeadYaw and pitch to the new ones.
+
+Smoothly increases the player's HeadYaw and pitch by the specified values.
+
+```lua title="example.lua"
+player.look_smooth_relative(45,7)
+```
