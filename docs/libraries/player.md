@@ -1,6 +1,6 @@
 ---
 tags:
-    - Lib
+  - Lib
 ---
 
 # Player
@@ -105,4 +105,141 @@ This is not the number you see above your hotbar.
 
 ```lua title="example.lua"
 print("Player is at level: " .. player.get_xp_level())
+```
+
+### `get_oxygen()`
+
+Returns the current player's oxygen.
+
+```lua title="example.lua"
+print(player.get_oxygen())
+```
+
+### `is_flying()`
+
+Returns true if the current player is flying.
+
+```lua title="example.lua"
+local player_is_flying = player.is_flying()
+
+if player_is_flying then
+  print("Player is flying.")
+else
+  print("Player is not flying.")
+end
+```
+
+### `can_fly()`
+
+Returns true if the current player is able to fly.
+
+```lua title="example.lua"
+local player_can_flying = player.can_fly()
+
+if player_can_flying then
+  print("Press double space button to start flying!")
+else
+  print("You can not fly.")
+end
+```
+
+### `get_distance_to(x, y, z)`
+
+**Arguments:**
+
+- `x`: X coordinate of block
+- `y`: Y coordinate of block
+- `z`: Z coordinate of block
+
+Returns the distance between the current player's eyes and the specified location.
+
+```lua title="example.lua"
+print(player.get_distance_to(0,0,0))
+-- Returns the distance between the current player's eyes and 0/0/0
+```
+
+### `find_item(type)`
+
+Scans through the current player's inventory to find the first slot, containing the specified item.
+
+Returns `NIL` if the argument is not valid or the item is not found in inventory.
+
+:::tip
+
+If searching for a vanilla item, do not forget to put `minecraft:` before the item-name!
+
+:::
+
+```lua title="example.lua"
+print(player.find_item("minecraft:wheat"))
+```
+
+### `get_item(slot)`
+
+Returns the item, placed in the specified slot of the current player's inventory.
+
+The returned object contains the item's `type`, `amount`, `lore` and `name`.
+
+```lua title="example.lua"
+local item = player.get_item(10)
+-- Gets the item in slot 10 of the current player's inventory.
+
+print(item.name)
+-- Returns for example "Wheat"
+print(item.type)
+-- Returns for example "minecraft:wheat"
+print(item.lore)
+-- Returns the item lore as a string
+print(item.amount)
+```
+
+### `select_hotbar_slot()`
+
+Selects the specified slot of the current player's hotbar.
+
+```lua title="example.lua"
+player.select_hotbar_slot(4)
+```
+
+### `get_yaw()`
+
+Returns the current player's HeadYaw.
+
+```lua title="example.lua"
+print(player.get_yaw())
+```
+
+### `get_pitch()`
+
+Returns the current player's pitch.
+
+```lua title="example.lua"
+print(player.get_pitch())
+```
+
+### `look(yaw, pitch)`
+
+**Arguments:**
+
+- `yaw`: the yaw, the player should look at. Should be between -180 and 180.
+- `pitch`: the pitch, the player should look at. Should be between -90 and 90.
+
+Sets the player's HeadYaw and pitch to the specified values.
+
+```lua title="example.lua"
+player.look(45,7)
+```
+
+### `look_smooth(yaw, pitch, seconds)`
+
+**Arguments:**
+
+- `yaw`: the yaw, the player should look at. Should be between -180 and 180.
+- `pitch`: the pitch, the player should look at. Should be between -90 and 90.
+- `seconds`: the time it should take to smooth look from current HeadYaw and pitch to the specified ones.
+
+Smoothly turns the player's HeadYaw and pitch to the specified values.
+
+```lua title="example.lua"
+player.look_smooth(45,7)
 ```
