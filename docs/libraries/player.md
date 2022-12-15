@@ -1,13 +1,13 @@
 ---
 tags:
-  - Lib
+    - Lib
 ---
 
 # Player
 
 `require("player")`
 
-The player libraries contains all kinds of functions related to the player.
+The player library contains all kinds of functions related to the player.
 
 ## Functions
 
