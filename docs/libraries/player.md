@@ -1,6 +1,6 @@
 ---
 tags:
-    - Lib
+  - Lib
 ---
 
 # Player
@@ -147,9 +147,9 @@ end
 
 **Arguments:**
 
--   `x`: X coordinate of block
--   `y`: Y coordinate of block
--   `z`: Z coordinate of block
+- `x`: X coordinate of block
+- `y`: Y coordinate of block
+- `z`: Z coordinate of block
 
 Returns the distance between the current player's eyes and the specified location.
 
@@ -235,8 +235,8 @@ print(player.get_pitch())
 
 **Arguments:**
 
--   `yaw`: the yaw, the player should look at. Should be between -180 and 180.
--   `pitch`: the pitch, the player should look at. Should be between -90 and 90.
+- `yaw`: the yaw, the player should look at. Should be between -180 and 180.
+- `pitch`: the pitch, the player should look at. Should be between -90 and 90.
 
 Sets the player's HeadYaw and pitch to the specified values.
 
@@ -248,9 +248,9 @@ player.look(45,7)
 
 **Arguments:**
 
--   `yaw`: the yaw, the player should look at. Should be between -180 and 180.
--   `pitch`: the pitch, the player should look at. Should be between -90 and 90.
--   `seconds`: the time it should take to smooth look from current HeadYaw and pitch to the specified ones.
+- `yaw`: the yaw, the player should look at. Should be between -180 and 180.
+- `pitch`: the pitch, the player should look at. Should be between -90 and 90.
+- `seconds`: the time it should take to smooth look from current HeadYaw and pitch to the specified ones.
 
 Smoothly turns the player's HeadYaw and pitch to the specified values.
 
