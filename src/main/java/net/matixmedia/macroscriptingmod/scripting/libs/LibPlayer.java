@@ -329,4 +329,13 @@ public class LibPlayer extends Lib {
             return null;
         }
     }
+
+    @AutoLibFunction
+    public static class ClearChat extends LibZeroArgFunction {
+        @Override
+        public LuaValue call() {
+            this.getMinecraft().inGameHud.getChatHud().clear(true);
+            return null;
+        }
+    }
 }

@@ -240,13 +240,4 @@ public class LibGui extends Lib implements EventListener {
             return new ObjItem(inventory.getStack(slot)).toLua();
         }
     }
-
-    @AutoLibFunction
-    public static class ClearChat extends LibZeroArgFunction {
-        @Override
-        public LuaValue call() {
-            this.getMinecraft().inGameHud.getChatHud().clear(true);
-            return null;
-        }
-    }
 }
