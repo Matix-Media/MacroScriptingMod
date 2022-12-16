@@ -8,11 +8,17 @@ import net.matixmedia.macroscriptingmod.api.scripting.objects.ObjItem;
 import net.matixmedia.macroscriptingmod.api.scripting.objects.ObjLocation;
 import net.matixmedia.macroscriptingmod.api.scripting.objects.ObjPlayer;
 import net.matixmedia.macroscriptingmod.scripting.helpers.ItemSearch;
+import net.matixmedia.macroscriptingmod.utils.Chat;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
 import net.minecraft.client.network.PlayerListEntry;
+import net.minecraft.command.argument.TextArgumentType;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.command.TellRawCommand;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
+import net.minecraft.text.Texts;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.luaj.vm2.LuaValue;
@@ -26,6 +32,7 @@ public class LibPlayer extends Lib {
         super("player");
     }
 
+    @AutoLibFunction
     public static class GetInfo extends LibZeroArgFunction {
         @Override
         public LuaValue call() {
@@ -36,6 +43,7 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class GetLocation extends ZeroArgFunction {
         @Override
         public LuaValue call() {
@@ -46,6 +54,7 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class GetGamemode extends ZeroArgFunction {
         @Override
         public LuaValue call() {
@@ -58,6 +67,7 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class GetUsername extends LibZeroArgFunction {
         @Override
         public LuaValue call() {
@@ -67,6 +77,7 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class GetUuid extends LibZeroArgFunction {
         @Override
         public LuaValue call() {
@@ -76,6 +87,7 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class GetHealth extends LibZeroArgFunction {
         @Override
         public LuaValue call() {
@@ -85,6 +97,7 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class GetHunger extends LibZeroArgFunction {
         @Override
         public LuaValue call() {
@@ -94,6 +107,7 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class GetXpLevel extends LibZeroArgFunction {
         @Override
         public LuaValue call() {
@@ -103,6 +117,7 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class GetXp extends LibZeroArgFunction {
         @Override
         public LuaValue call() {
@@ -112,6 +127,7 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class GetTotalXp extends LibZeroArgFunction {
         @Override
         public LuaValue call() {
@@ -121,6 +137,7 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class GetOxygen extends LibZeroArgFunction {
         @Override
         public LuaValue call() {
@@ -130,6 +147,7 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class IsFlying extends LibZeroArgFunction {
         @Override
         public LuaValue call() {
@@ -139,6 +157,7 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class CanFly extends LibZeroArgFunction {
         @Override
         public LuaValue call() {
@@ -148,6 +167,7 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class GetDistanceTo extends LibThreeArgFunction {
         @Override
         public LuaValue call(LuaValue arg1, LuaValue arg2, LuaValue arg3) {
@@ -160,6 +180,7 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class FindItem extends LibOneArgFunction {
         @Override
         public LuaValue call(LuaValue arg) {
@@ -178,6 +199,7 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class GetItem extends LibOneArgFunction {
         @Override
         public LuaValue call(LuaValue arg) {
@@ -190,6 +212,17 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
+    public static class GetHotbarSlot extends LibZeroArgFunction {
+        @Override
+        public LuaValue call() {
+            if (this.getMinecraft().player == null) return null;
+
+            return LuaValue.valueOf(this.getMinecraft().player.getInventory().selectedSlot);
+        }
+    }
+
+    @AutoLibFunction
     public static class SelectHotbarSlot extends LibOneArgFunction {
         @Override
         public LuaValue call(LuaValue arg) {
@@ -203,6 +236,18 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
+    public static class Tellraw extends LibOneArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg) {
+            //JsonElement jsonElement = JsonParser.parseString(arg.checkjstring());
+            MutableText text = Text.Serializer.fromJson(arg.checkjstring());
+            Chat.sendClientMessage(text);
+            return null;
+        }
+    }
+
+    @AutoLibFunction
     public static class GetYaw extends LibZeroArgFunction {
         @Override
         public LuaValue call() {
@@ -211,6 +256,7 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class GetPitch extends LibZeroArgFunction {
         @Override
         public LuaValue call() {
@@ -219,6 +265,7 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class Look extends LibTwoArgFunction {
         @Override
         public LuaValue call(LuaValue arg1, LuaValue arg2) {
@@ -233,6 +280,7 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
     public static class LookSmooth extends LibThreeArgFunction {
         @Override
         public LuaValue call(LuaValue arg1, LuaValue arg2, LuaValue arg3) {
@@ -287,8 +335,91 @@ public class LibPlayer extends Lib {
 
             return null;
         }
-
     }
 
+    @AutoLibFunction
+    public static class LookRelative extends LibTwoArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg1, LuaValue arg2) {
+            if (this.getMinecraft().player ==  null) return null;
+            double yaw = arg1.checkdouble() + this.getMinecraft().player.getHeadYaw();
+            double pitch = arg2.checkdouble() + this.getMinecraft().player.getPitch();
+            if (yaw > 180 || yaw < -180) {
+                while (true) {
+                    if (yaw > 180) yaw -= 360;
+                    else if (yaw < -180) yaw += 360;
+                    if (yaw >= -180 && yaw <= 180) break;
+                }
+            }
+            pitch = MathHelper.clamp(pitch,-90,90);
+            yaw = MathHelper.clamp(yaw,-180,180);
+            this.getMinecraft().player.setYaw((float) yaw);
+            this.getMinecraft().player.setPitch((float) pitch);
+            return null;
+        }
+    }
 
+    @AutoLibFunction
+    public static class LookSmoothRelative extends LibThreeArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg1, LuaValue arg2, LuaValue arg3) {
+            if (this.getMinecraft().player ==  null) return null;
+            MinecraftClient mc = this.getMinecraft();
+            double yawWanted = arg1.checkdouble() + mc.player.getHeadYaw();
+            double pitchWanted = arg2.checkdouble() + mc.player.getPitch();
+            double seconds = arg3.checkdouble();
+            double steps = seconds * 100;
+            double yaw = mc.player.getHeadYaw();
+            double pitch = mc.player.getPitch();
+            if (yawWanted > 180 || yawWanted < -180) {
+                while (true) {
+                    if (yawWanted > 180) yawWanted -= 360;
+                    else if (yawWanted < -180) yawWanted += 360;
+                    if (yawWanted >= -180 && yawWanted <= 180) break;
+                }
+            }
+            yawWanted = MathHelper.clamp(yawWanted,-180,180);
+            pitchWanted = MathHelper.clamp(pitchWanted,-90,90);
+
+            if (yaw < 0) yaw += 360;
+            if (yawWanted < 0) yawWanted += 360;
+
+            pitch += 90;
+            pitchWanted += 90;
+
+            double yawDiff = yawWanted - yaw;
+            double pitchDiff = pitchWanted - pitch;
+
+            if (yawDiff > 180) yawDiff -= 360;
+            else if (yawDiff < -180) yawDiff += 360;
+
+            double yawStep = yawDiff / steps;
+            double pitchStep = pitchDiff / steps;
+
+            double savedYaw = mc.player.getHeadYaw();
+            double savedPitch = mc.player.getPitch();
+            for (int i = 0; i < steps; i++) {
+                double toBeSetYaw = savedYaw + yawStep;
+                double toBeSetPitch = savedPitch + pitchStep;
+
+                if (toBeSetYaw > 180) toBeSetYaw -= 360;
+                else if (toBeSetYaw < -180) toBeSetYaw += 360;
+
+                mc.player.setYaw((float) (toBeSetYaw));
+                mc.player.setPitch((float) (toBeSetPitch));
+                savedYaw = toBeSetYaw;
+                savedPitch = toBeSetPitch;
+
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            mc.player.setYaw((float) yawWanted);
+            mc.player.setPitch((float) pitchWanted - 90);
+
+            return null;
+        }
+    }
 }
