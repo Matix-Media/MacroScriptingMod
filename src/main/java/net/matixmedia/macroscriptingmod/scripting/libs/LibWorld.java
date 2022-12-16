@@ -10,21 +10,19 @@ import net.matixmedia.macroscriptingmod.eventsystem.EventManager;
 import net.matixmedia.macroscriptingmod.eventsystem.events.EventRenderWorld;
 import net.matixmedia.macroscriptingmod.eventsystem.events.EventTick;
 import net.matixmedia.macroscriptingmod.mixins.AccessorClientPlayerInteractionManager;
-import net.matixmedia.macroscriptingmod.rendering.color.QuadColor;
 import net.matixmedia.macroscriptingmod.scripting.helpers.EspBox;
 import net.matixmedia.macroscriptingmod.scripting.helpers.Tracer;
 import net.minecraft.block.Block;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.mob.ShulkerEntity;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.*;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
-import org.luaj.vm2.lib.LibFunction;
-import org.luaj.vm2.lib.OneArgFunction;
 import org.luaj.vm2.lib.ThreeArgFunction;
 
 import java.util.ArrayList;
@@ -52,6 +50,27 @@ public class LibWorld extends Lib implements EventListener {
         EventManager.unregisterListener(this);
     }
 
+    private void updateEspBox(EspBox espBox) {
+        MinecraftClient mc = MinecraftClient.getInstance();
+        if (mc.player == null) return;
+
+        if (!espBox.isDistanceFalloff()) return;
+        double x = (espBox.minX + espBox.maxX) / 2;
+        double y = (espBox.minY + espBox.maxY) / 2;
+        double z = (espBox.minZ + espBox.maxZ) / 2;
+        double distance = new Vec3d(x, y, z).distanceTo(mc.player.getPos());
+        espBox.setDistance(distance);
+    }
+
+    private void updateTracker(Tracer tracer) {
+        MinecraftClient mc = MinecraftClient.getInstance();
+        if (mc.player == null) return;
+
+        if (!tracer.isDistanceFalloff()) return;
+        double distance = tracer.getTarget().distanceTo(mc.player.getPos());
+        tracer.setDistance(distance);
+    }
+
     @EventHandler
     public void onRenderWorld(EventRenderWorld event) {
         MinecraftClient mc = MinecraftClient.getInstance();
@@ -59,13 +78,11 @@ public class LibWorld extends Lib implements EventListener {
 
         synchronized (this.espBoxes) {
             synchronized (this.tracers) {
-                for (int i = 0; i < this.espBoxes.size(); i++) {
-                    EspBox espBox = this.espBoxes.get(i);
+                for (EspBox espBox : this.espBoxes) {
                     if (espBox == null) continue;
                     espBox.render(event.getMatrices(), event.getTickDelta(), event.getLimitTime(), event.getCamera(), event.getGameRenderer(), event.getPositionMatrix());
                 }
-                for (int i = 0; i < this.tracers.size(); i++) {
-                    Tracer tracer = this.tracers.get(i);
+                for (Tracer tracer : this.tracers) {
                     if (tracer == null) continue;
                     tracer.render(event.getMatrices(), event.getTickDelta(), event.getLimitTime(), event.getCamera(), event.getGameRenderer(), event.getPositionMatrix());
                 }
@@ -81,27 +98,18 @@ public class LibWorld extends Lib implements EventListener {
         if (mc.player == null) return;
 
         for (EspBox espBox : this.espBoxes) {
-            if (!espBox.isDistanceFalloff()) continue;
-            double x = (espBox.minX + espBox.maxX) / 2;
-            double y = (espBox.minY + espBox.maxY) / 2;
-            double z = (espBox.minZ + espBox.maxZ) / 2;
-            double distance = new Vec3d(x, y, z).distanceTo(mc.player.getPos());
-            espBox.setDistance(distance);
+            this.updateEspBox(espBox);
         }
 
         for (Tracer tracer : this.tracers) {
-            if (!tracer.isDistanceFalloff()) continue;
-            double distance = tracer.getTarget().distanceTo(mc.player.getPos());
-            tracer.setDistance(distance);
+            this.updateTracker(tracer);
         }
-
 
         synchronized (this.miningBlocks) {
             ListIterator<BlockPos> iterator = this.miningBlocks.listIterator();
             while (iterator.hasNext()) {
                 BlockPos pos = iterator.next();
                 Vec3d posV = new Vec3d(pos.getX(), pos.getY(), pos.getZ());
-                float breakDelta = mc.world.getBlockState(pos).calcBlockBreakingDelta(mc.player, mc.world, pos);
 
                 if (posV.distanceTo(mc.player.getEyePos()) > 4.5) {
                     iterator.remove();
@@ -217,6 +225,7 @@ public class LibWorld extends Lib implements EventListener {
                 EspBox espBox = new EspBox(minX, minY, minZ, maxX, maxY, maxZ);
                 instance.espBoxes.add(espBox);
 
+                instance.updateEspBox(espBox);
                 return LuaValue.valueOf(espBox.getUuid().toString());
             } else if (args.narg() == 9) {
                 int red = args.arg(7).checkint();
@@ -226,6 +235,7 @@ public class LibWorld extends Lib implements EventListener {
                 EspBox espBox = new EspBox(minX, minY, minZ, maxX, maxY, maxZ, red, green, blue);
                 instance.espBoxes.add(espBox);
 
+                instance.updateEspBox(espBox);
                 return LuaValue.valueOf(espBox.getUuid().toString());
             }
 
@@ -270,6 +280,7 @@ public class LibWorld extends Lib implements EventListener {
                 Tracer tracer = new Tracer(x, y, z);
                 instance.tracers.add(tracer);
 
+                instance.updateTracker(tracer);
                 return LuaValue.valueOf(tracer.getUuid().toString());
             } else if (args.narg() == 6) {
                 int red = args.arg(4).checkint();
@@ -279,6 +290,7 @@ public class LibWorld extends Lib implements EventListener {
                 Tracer tracer = new Tracer(x, y, z, red, green, blue);
                 instance.tracers.add(tracer);
 
+                instance.updateTracker(tracer);
                 return LuaValue.valueOf(tracer.getUuid().toString());
             }
 
