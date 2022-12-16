@@ -1,7 +1,5 @@
 package net.matixmedia.macroscriptingmod.scripting.libs;
 
-import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.matixmedia.macroscriptingmod.api.scripting.*;
 import net.matixmedia.macroscriptingmod.api.scripting.objects.ObjGameMode;
 import net.matixmedia.macroscriptingmod.api.scripting.objects.ObjItem;
@@ -10,15 +8,10 @@ import net.matixmedia.macroscriptingmod.api.scripting.objects.ObjPlayer;
 import net.matixmedia.macroscriptingmod.scripting.helpers.ItemSearch;
 import net.matixmedia.macroscriptingmod.utils.Chat;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
 import net.minecraft.client.network.PlayerListEntry;
-import net.minecraft.command.argument.TextArgumentType;
-import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.command.TellRawCommand;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-import net.minecraft.text.Texts;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.luaj.vm2.LuaValue;
@@ -213,7 +206,7 @@ public class LibPlayer extends Lib {
     }
 
     @AutoLibFunction
-    public static class GetHotbarSlot extends LibZeroArgFunction {
+    public static class GetSelectedHotbarSlot extends LibZeroArgFunction {
         @Override
         public LuaValue call() {
             if (this.getMinecraft().player == null) return null;
