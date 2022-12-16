@@ -6,14 +6,8 @@ import net.matixmedia.macroscriptingmod.exceptions.ScriptException;
 import net.matixmedia.macroscriptingmod.scripting.RunningScript;
 import net.matixmedia.macroscriptingmod.scripting.Runtime;
 import net.matixmedia.macroscriptingmod.scripting.Script;
-import net.matixmedia.macroscriptingmod.utils.Chat;
-import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
-import org.luaj.vm2.Varargs;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class LibScript extends Lib {
 
@@ -86,6 +80,14 @@ public class LibScript extends Lib {
             }
 
             return runningScripts;
+        }
+    }
+
+    @AutoLibFunction
+    public static class GetCurrentScript extends LibZeroArgFunction {
+        @Override
+        public LuaValue call() {
+            return LuaValue.valueOf(this.getRunningScript().getUuid().toString());
         }
     }
 }
