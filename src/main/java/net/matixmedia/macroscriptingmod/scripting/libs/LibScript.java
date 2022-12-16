@@ -63,26 +63,29 @@ public class LibScript extends Lib {
     @AutoLibFunction
     public static class GetRunningScripts extends LibArgFunction {
         @Override
-        public Varargs invoke(Varargs args) {
+        public LuaValue call() {
             MacroScriptingMod mod = MacroScriptingMod.getInstance();
-            if (args.narg() == 0) {
-                LuaTable runningScripts = LuaValue.tableOf();
-                for (RunningScript runningScript : mod.getRuntime().getRunningScripts()) {
-                    runningScripts.set(runningScript.getUuid().toString(),
-                            runningScript.getScript().getFile() != null ? runningScript.getScript().getFile().getName() : "<Script>");
-                }
-                return runningScripts;
-            } else if (args.narg() == 1) {
-                String nameOrId = args.arg1().checkjstring();
 
-                List<LuaValue> runningScripts = new ArrayList<>();
-                for (RunningScript runningScript : mod.getRuntime().getRunningScriptsByNameOrId(nameOrId)) {
-                    runningScripts.add(LuaValue.valueOf(runningScript.getUuid().toString()));
-                }
-
-                return LuaValue.listOf(runningScripts.toArray(new LuaValue[0]));
+            LuaTable runningScripts = LuaValue.tableOf();
+            for (RunningScript runningScript : mod.getRuntime().getRunningScripts()) {
+                runningScripts.set(runningScript.getUuid().toString(),
+                        runningScript.getScript().getFile() != null ? runningScript.getScript().getFile().getName() : "<Script>");
             }
-            return argerror("Invalid amount of arguments (valid is 0 or 1)");
+            return runningScripts;
+        }
+
+        @Override
+        public LuaValue call(LuaValue arg) {
+            MacroScriptingMod mod = MacroScriptingMod.getInstance();
+            String nameOrId = arg.checkjstring();
+
+            LuaTable runningScripts = LuaValue.tableOf();
+            for (RunningScript runningScript : mod.getRuntime().getRunningScriptsByNameOrId(nameOrId)) {
+                runningScripts.set(runningScript.getUuid().toString(),
+                        runningScript.getScript().getFile() != null ? runningScript.getScript().getFile().getName() : "<Script>");
+            }
+
+            return runningScripts;
         }
     }
 }
