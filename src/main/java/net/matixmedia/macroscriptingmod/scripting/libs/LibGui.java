@@ -9,7 +9,6 @@ import net.matixmedia.macroscriptingmod.eventsystem.EventHandler;
 import net.matixmedia.macroscriptingmod.eventsystem.EventListener;
 import net.matixmedia.macroscriptingmod.eventsystem.EventManager;
 import net.matixmedia.macroscriptingmod.eventsystem.events.EventRender;
-import net.matixmedia.macroscriptingmod.scripting.RunningScript;
 import net.matixmedia.macroscriptingmod.scripting.helpers.ItemSearch;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.*;
@@ -24,16 +23,13 @@ import net.minecraft.client.gui.screen.world.EditWorldScreen;
 import net.minecraft.client.gui.screen.world.OptimizeWorldScreen;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.util.registry.Registry;
 import org.luaj.vm2.LuaValue;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 public class LibGui extends Lib implements EventListener {
-    private static Map<Class<? extends Screen>, String> GUI_SCREENS = new HashMap<>() {{
+    private static final Map<Class<? extends Screen>, String> GUI_SCREENS = new HashMap<>() {{
         put(Screen.class, "UNKNOWN");
         put(DemoScreen.class, "demo");
         put(GameMenuScreen.class, "game_menu");
@@ -242,6 +238,15 @@ public class LibGui extends Lib implements EventListener {
             Inventory inventory = ((GenericContainerScreen) mc.currentScreen).getScreenHandler().getInventory();
 
             return new ObjItem(inventory.getStack(slot)).toLua();
+        }
+    }
+
+    @AutoLibFunction
+    public static class ClearChat extends LibZeroArgFunction {
+        @Override
+        public LuaValue call() {
+            this.getMinecraft().inGameHud.getChatHud().clear(true);
+            return null;
         }
     }
 }
