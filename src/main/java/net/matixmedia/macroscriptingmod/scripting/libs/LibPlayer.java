@@ -455,4 +455,14 @@ public class LibPlayer extends Lib {
         }
     }
 
+    @AutoLibFunction
+    public static class Respawn extends LibZeroArgFunction {
+        @Override
+        public LuaValue call() {
+            if (this.getMinecraft().player == null) return null;
+            this.getMinecraft().player.requestRespawn();
+            return null;
+        }
+    }
+
 }
