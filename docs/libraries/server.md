@@ -1,6 +1,6 @@
 ---
 tags:
-    - Lib
+  - Lib
 ---
 
 # Server
@@ -29,7 +29,7 @@ server.reconnect()
 
 Returns a list of currently connected players.
 
-The returned list contains the player's `name` and `UUID`.
+The returned list contains the player's `name`, `display_name` and `uuid`.
 
 ```lua title="example.lua"
 local players = server.get_online_players()
