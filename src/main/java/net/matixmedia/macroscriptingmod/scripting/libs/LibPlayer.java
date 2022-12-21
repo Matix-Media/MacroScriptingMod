@@ -10,6 +10,8 @@ import net.matixmedia.macroscriptingmod.utils.Chat;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.item.ItemStack;
+import net.minecraft.scoreboard.Scoreboard;
+import net.minecraft.scoreboard.ScoreboardPlayerScore;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
@@ -424,4 +426,33 @@ public class LibPlayer extends Lib {
             return null;
         }
     }
+
+    @AutoLibFunction
+    public static class GetScoreboard extends LibZeroArgFunction {
+        @Override
+        public LuaValue call() {
+            if (this.getMinecraft().player ==  null) return null;
+            Scoreboard sb =  this.getMinecraft().player.getScoreboard();
+            String text = "";
+            for (String name : sb.getObjectiveNames()) {
+                for (ScoreboardPlayerScore score : sb.getAllPlayerScores(sb.getObjective(name))) {
+                    text = text.replace("§", "&");
+                    text = "\n" + score.getPlayerName() + text;
+                }
+            }
+            return LuaValue.valueOf(text);
+        }
+    }
+
+    @AutoLibFunction
+    public static class GetScoreboardTitle extends LibZeroArgFunction {
+        @Override
+        public LuaValue call() {
+            if (this.getMinecraft().player ==  null) return null;
+            Scoreboard sb =  this.getMinecraft().player.getScoreboard();
+            for (String name : sb.getObjectiveNames()) return LuaValue.valueOf(sb.getObjective(name).getName().toString());
+            return null;
+        }
+    }
+
 }
