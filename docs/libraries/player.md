@@ -306,3 +306,11 @@ all `§` are replaced by `&`.
 ```lua title="example.lua"
 print(player.get_scoreboard())
 ```
+
+### `respawn()`
+
+Respawns the player if their currently dead.
+
+```lua title="example.lua"
+player.respawn()
+```
