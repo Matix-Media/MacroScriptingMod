@@ -284,3 +284,25 @@ Smoothly increases the player's HeadYaw and pitch by the specified values.
 ```lua title="example.lua"
 player.look_smooth_relative(45,7)
 ```
+
+### `get_scoreboard_title()`
+
+Returns the scoreboard's title.
+
+```lua title="example.lua"
+print(player.get_scoreboard_title())
+```
+
+### `get_scoreboard()`
+
+Returns the scoreboard as a string.
+
+:::info
+
+all `§` are replaced by `&`.
+
+:::
+
+```lua title="example.lua"
+print(player.get_scoreboard())
+```
