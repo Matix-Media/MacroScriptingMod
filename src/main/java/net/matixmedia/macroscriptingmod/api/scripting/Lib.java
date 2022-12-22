@@ -1,12 +1,8 @@
 package net.matixmedia.macroscriptingmod.api.scripting;
 
 import com.google.common.base.CaseFormat;
-import com.sun.jna.platform.win32.COM.TypeLibUtil;
 import net.matixmedia.macroscriptingmod.exceptions.LibTypeException;
 import net.matixmedia.macroscriptingmod.scripting.RunningScript;
-import net.matixmedia.macroscriptingmod.scripting.Script;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.LibFunction;
 import org.luaj.vm2.lib.TwoArgFunction;
@@ -16,10 +12,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 public abstract class Lib extends TwoArgFunction {
-    private static final Logger LOGGER = LogManager.getLogger("MacroScripting/Lib");
+    // private static final Logger LOGGER = LogManager.getLogger("MacroScripting/Lib");
     private static final Map<Lib, RunningScript> INSTANCES = new HashMap<>();
 
     protected static Lib getInstance(Class<? extends Lib> type, RunningScript runningScript) {
@@ -33,7 +28,6 @@ public abstract class Lib extends TwoArgFunction {
     private RunningScript runningScript;
 
     private final String libraryName;
-    private LuaValue env;
 
     public Lib(String libraryName) {
         super();
@@ -51,7 +45,6 @@ public abstract class Lib extends TwoArgFunction {
     @Override
     public LuaValue call(LuaValue modName, LuaValue env) {
         LuaValue lib = tableOf();
-        this.env = env;
         try {
             for (Class<?> implementedClasses : this.getClass().getClasses())  {
                 if (!Modifier.isStatic(implementedClasses.getModifiers())) continue;
@@ -70,7 +63,6 @@ public abstract class Lib extends TwoArgFunction {
                 if (LibArgFunction.class.isAssignableFrom(implementedClasses))
                     ((LibArgFunction) instance).setRunningScript(this.runningScript);
 
-                LOGGER.info("Registered " + libraryName + "#" + functionName);
                 lib.set(functionName, instance);
             }
 
