@@ -432,8 +432,8 @@ public class LibPlayer extends Lib {
     public static class GetScoreboard extends LibZeroArgFunction {
         @Override
         public LuaValue call() {
-            if (this.getMinecraft().player ==  null) return null;
-            Scoreboard sb =  this.getMinecraft().player.getScoreboard();
+            if (this.getMinecraft().player == null) return null;
+            Scoreboard sb = this.getMinecraft().player.getScoreboard();
             List<String> lines = new ArrayList<>();
             for (String name : sb.getObjectiveNames()) {
                 for (ScoreboardPlayerScore score : sb.getAllPlayerScores(sb.getObjective(name))) {
@@ -448,9 +448,9 @@ public class LibPlayer extends Lib {
     public static class GetScoreboardTitle extends LibZeroArgFunction {
         @Override
         public LuaValue call() {
-            if (this.getMinecraft().player ==  null) return null;
-            Scoreboard sb =  this.getMinecraft().player.getScoreboard();
-            for (String name : sb.getObjectiveNames()) return LuaValue.valueOf(sb.getObjective(name).getName().toString());
+            if (this.getMinecraft().player == null) return null;
+            Scoreboard sb = this.getMinecraft().player.getScoreboard();
+            for (String name : sb.getObjectiveNames()) return LuaValue.valueOf(sb.getObjective(name).getName());
             return null;
         }
     }
