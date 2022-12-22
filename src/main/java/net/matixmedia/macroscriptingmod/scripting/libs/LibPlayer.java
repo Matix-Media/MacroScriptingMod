@@ -19,6 +19,7 @@ import net.minecraft.util.math.Vec3d;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.ZeroArgFunction;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class LibPlayer extends Lib {
@@ -433,14 +434,13 @@ public class LibPlayer extends Lib {
         public LuaValue call() {
             if (this.getMinecraft().player ==  null) return null;
             Scoreboard sb =  this.getMinecraft().player.getScoreboard();
-            String text = "";
+            List<String> lines = new ArrayList<>();
             for (String name : sb.getObjectiveNames()) {
                 for (ScoreboardPlayerScore score : sb.getAllPlayerScores(sb.getObjective(name))) {
-                    text = text.replace("§", "&");
-                    text = "\n" + score.getPlayerName() + text;
+                    lines.add(score.getPlayerName());
                 }
             }
-            return LuaValue.valueOf(text);
+            return LuaValue.valueOf(String.join("\n", lines));
         }
     }
 
