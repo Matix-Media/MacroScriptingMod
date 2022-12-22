@@ -244,6 +244,28 @@ public class LibPlayer extends Lib {
     }
 
     @AutoLibFunction
+    public static class Echo extends LibOneArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg) {
+            if (this.getMinecraft().player == null) return null;
+
+            String message = arg.checkjstring();
+            this.getMinecraft().player.sendChatMessage(message, null);
+
+            return null;
+        }
+    }
+
+    @AutoLibFunction
+    public static class ClearChat extends LibZeroArgFunction {
+        @Override
+        public LuaValue call() {
+            this.getMinecraft().inGameHud.getChatHud().clear(true);
+            return null;
+        }
+    }
+
+    @AutoLibFunction
     public static class GetYaw extends LibZeroArgFunction {
         @Override
         public LuaValue call() {
@@ -415,15 +437,6 @@ public class LibPlayer extends Lib {
             mc.player.setYaw((float) yawWanted);
             mc.player.setPitch((float) pitchWanted - 90);
 
-            return null;
-        }
-    }
-
-    @AutoLibFunction
-    public static class ClearChat extends LibZeroArgFunction {
-        @Override
-        public LuaValue call() {
-            this.getMinecraft().inGameHud.getChatHud().clear(true);
             return null;
         }
     }
