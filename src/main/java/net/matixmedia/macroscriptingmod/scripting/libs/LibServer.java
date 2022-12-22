@@ -8,10 +8,14 @@ import net.matixmedia.macroscriptingmod.api.scripting.objects.ObjPlayer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ConnectScreen;
 import net.minecraft.client.gui.screen.DisconnectedScreen;
+import net.minecraft.client.gui.screen.MessageScreen;
+import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.client.network.ServerAddress;
 import net.minecraft.client.network.ServerInfo;
+import net.minecraft.client.realms.gui.screen.RealmsMainScreen;
+import net.minecraft.text.Text;
 import org.luaj.vm2.LuaValue;
 
 import java.util.ArrayList;
@@ -21,6 +25,35 @@ public class LibServer extends Lib {
 
     public LibServer() {
         super("server");
+    }
+
+    @AutoLibFunction
+    public static class Disconnect extends LibZeroArgFunction {
+        @Override
+        public LuaValue call() {
+            if (this.getMinecraft().world == null) return null;
+
+            boolean isSinglePlayer = this.getMinecraft().isInSingleplayer();
+            boolean connectedToRealms = this.getMinecraft().isConnectedToRealms();
+
+            this.getMinecraft().world.disconnect();
+            if (isSinglePlayer) {
+                this.getMinecraft().disconnect(new MessageScreen(Text.translatable("menu.savingLevel")));
+            } else {
+                this.getMinecraft().disconnect();
+            }
+
+            TitleScreen titleScreen = new TitleScreen();
+            if (isSinglePlayer) {
+                this.getMinecraft().setScreen(titleScreen);
+            } else if (connectedToRealms) {
+                this.getMinecraft().setScreen(new RealmsMainScreen(titleScreen));
+            } else {
+                this.getMinecraft().setScreen(new MultiplayerScreen(titleScreen));
+            }
+
+            return null;
+        }
     }
 
     @AutoLibFunction
