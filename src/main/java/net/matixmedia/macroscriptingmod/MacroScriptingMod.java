@@ -102,6 +102,7 @@ public class MacroScriptingMod implements ClientModInitializer, EventListener {
         this.runtime.addLibrary(LibScript.class);
         this.runtime.addLibrary(LibHttp.class);
         this.runtime.addLibrary(LibEvents.class);
+        this.runtime.addLibrary(LibSettings.class);
 
         this.runtime.addLibrary(InterruptDebugger.class);
     }
