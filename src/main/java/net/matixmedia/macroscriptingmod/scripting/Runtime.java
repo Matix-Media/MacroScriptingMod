@@ -27,7 +27,7 @@ import java.util.concurrent.CompletableFuture;
 public class Runtime {
     private static final Logger LOGGER = LogManager.getLogger("MacroScripting/Runtime");
 
-    private PrintStream printStream;
+    private final PrintStream printStream;
     private final List<Class<? extends LibFunction>> libraries = new ArrayList<>();
     private final List<RunningScript> runningScripts = new ArrayList<>();
 
@@ -107,15 +107,12 @@ public class Runtime {
                     LOGGER.error("Error executing lua script");
                     LOGGER.error("Type: " + e.getClass().getSimpleName());
                     if (e instanceof LuaError luaError && luaError.getCause() != null) LOGGER.error("Cause: " + e.getCause().getClass().getSimpleName());
-                    Chat.sendClientSystemMessage(Chat.Color.RED + "Error executing lua script: " + e.getMessage());
+                    Chat.sendClientSystemMessage(Chat.Color.RED + "Error executing lua script:\n" + e.getMessage());
                     e.printStackTrace();
                     exception = e;
                 }
             }
-
-            EventScriptStop event = new EventScriptStop.Pre(runningScript);
-            EventManager.fire(event);
-            if (!event.isCancelled()) runningScript.stop();
+            runningScript.requestStop();
 
             if (exception != null) throw exception;
 

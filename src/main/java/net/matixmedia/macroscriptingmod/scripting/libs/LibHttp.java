@@ -6,6 +6,8 @@ import net.matixmedia.macroscriptingmod.api.scripting.AutoLibFunction;
 import net.matixmedia.macroscriptingmod.api.scripting.Lib;
 import net.matixmedia.macroscriptingmod.api.scripting.LibArgFunction;
 import net.matixmedia.macroscriptingmod.api.scripting.LibOneArgFunction;
+import net.matixmedia.macroscriptingmod.api.scripting.objects.ObjWebsocket;
+import net.matixmedia.macroscriptingmod.scripting.helpers.WebsocketClientHandler;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.xml.sax.SAXException;
@@ -13,10 +15,13 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringJoiner;
 
 public class LibHttp extends Lib {
@@ -142,6 +147,20 @@ public class LibHttp extends Lib {
                 connection.disconnect();
                 return LuaValue.valueOf(response);
             } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    @AutoLibFunction
+    public static class Websocket extends LibOneArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg) {
+            try {
+                WebsocketClientHandler client = new WebsocketClientHandler(new URI(arg.checkjstring()), this.getRunningScript());
+                client.connect();
+                return new ObjWebsocket(client).toLua();
+            } catch (URISyntaxException e) {
                 throw new RuntimeException(e);
             }
         }

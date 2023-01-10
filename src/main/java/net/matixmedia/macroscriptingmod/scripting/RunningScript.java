@@ -1,5 +1,7 @@
 package net.matixmedia.macroscriptingmod.scripting;
 
+import net.matixmedia.macroscriptingmod.eventsystem.EventManager;
+import net.matixmedia.macroscriptingmod.eventsystem.events.EventScriptStop;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaValue;
 
@@ -24,6 +26,12 @@ public class RunningScript {
         this.thread = thread;
         this.interruptDebugger = interruptDebugger;
         this.runtime = runtime;
+    }
+
+    public void requestStop() {
+        EventScriptStop.Pre event = new EventScriptStop.Pre(this);
+        EventManager.fire(event);
+        if (!event.isCancelled()) this.stop();
     }
 
     public void stop() {

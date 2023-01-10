@@ -9,6 +9,7 @@ import net.matixmedia.macroscriptingmod.eventsystem.EventListener;
 import net.matixmedia.macroscriptingmod.eventsystem.EventManager;
 import net.matixmedia.macroscriptingmod.eventsystem.events.*;
 import net.matixmedia.macroscriptingmod.exceptions.ScriptInterruptedException;
+import net.matixmedia.macroscriptingmod.utils.Chat;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.luaj.vm2.LuaError;
@@ -90,7 +91,7 @@ public class LibEvents extends Lib implements EventListener {
         this.callEvent("on_tick", new LuaValue[0]);
     }
 
-    private boolean callEvent(String event, LuaValue[] args) {
+    public boolean callEvent(String event, LuaValue[] args) {
         boolean cancelEvent = false;
 
         try {
@@ -110,6 +111,7 @@ public class LibEvents extends Lib implements EventListener {
         } catch (Exception e) {
             if (e instanceof LuaError luaError) {
                 if (!(luaError.getCause() instanceof ScriptInterruptedException)) {
+                    Chat.sendClientSystemMessage(Chat.Color.RED + "Error calling event listener:\n" + e.getMessage());
                     LOGGER.error("Error calling event listener:");
                     LOGGER.error(e.getMessage());
                 }
