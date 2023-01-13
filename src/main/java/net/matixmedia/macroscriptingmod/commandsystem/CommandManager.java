@@ -5,17 +5,12 @@ import net.matixmedia.macroscriptingmod.eventsystem.EventListener;
 import net.matixmedia.macroscriptingmod.eventsystem.EventManager;
 import net.matixmedia.macroscriptingmod.eventsystem.events.EventChatMessage;
 import net.matixmedia.macroscriptingmod.utils.Chat;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 public class CommandManager implements EventListener {
-    private static final Logger LOGGER = LogManager.getLogger("MacroScripting/Commands");
-    public static Logger getLogger() {return LOGGER;}
-
     private final List<Command> registeredCommands = new ArrayList<>();
 
     public CommandManager() {
@@ -35,7 +30,9 @@ public class CommandManager implements EventListener {
         if (!event.getMessage().startsWith(".")) return;
         event.cancel();
 
-        List<String> args = List.of(event.getMessage().substring(1).split(" "));
+        boolean silent = event.getMessage().startsWith("...");
+
+        List<String> args = List.of(event.getMessage().substring(silent ? 3 : 1).split(" "));
 
         Command executableCommand = null;
         for (Command command : this.registeredCommands) {
@@ -52,7 +49,7 @@ public class CommandManager implements EventListener {
         if (args.size() > 1) passedArgs = args.subList(1, args.size()).toArray(new String[args.size() - 2]);
         else passedArgs = new String[0];
 
-        boolean result = executableCommand.execute(passedArgs);
+        boolean result = executableCommand.execute(passedArgs, silent);
         if (!result) Chat.sendClientSystemMessage("Help: " + Chat.Color.AQUA + "." +
                 executableCommand.getCommand() + (executableCommand.getHelp() != null ? " " + executableCommand.getHelp() : ""));
     }

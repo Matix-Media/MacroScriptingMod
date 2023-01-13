@@ -6,25 +6,21 @@ import net.matixmedia.macroscriptingmod.scripting.Script;
 import net.matixmedia.macroscriptingmod.utils.Chat;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.luaj.vm2.LuaError;
-
-import java.io.IOException;
 
 public class CommandEval extends Command {
 
-    private Runtime runtime;
+    private final Runtime runtime;
 
     public CommandEval(Runtime runtime) {
         this.runtime = runtime;
     }
 
     @Override
-    public boolean execute(String[] args) {
+    public boolean execute(String[] args, boolean silent) {
         if (args.length < 1) return false;
         String code = String.join(" ", args);
 
-        Chat.sendClientSystemMessage("Evaluating lua code...");
-        //Chat.sendClientSystemMessage(code);
+        if (!silent) Chat.sendClientSystemMessage("Evaluating lua code...");
         try {
             this.runtime.execute(new Script(code));
         } catch (RuntimeException e) {

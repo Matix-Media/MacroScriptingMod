@@ -3,7 +3,6 @@ package net.matixmedia.macroscriptingmod.commandsystem.commands;
 import net.matixmedia.macroscriptingmod.commandsystem.Command;
 import net.matixmedia.macroscriptingmod.scripting.RunningScript;
 import net.matixmedia.macroscriptingmod.scripting.Runtime;
-import net.matixmedia.macroscriptingmod.scripting.Script;
 import net.matixmedia.macroscriptingmod.utils.Chat;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,7 +16,7 @@ public class CommandRunning extends Command {
     }
 
     @Override
-    public boolean execute(String[] args) {
+    public boolean execute(String[] args, boolean silent) {
         Chat.sendClientSystemMessage("Running scripts:");
         for (RunningScript runningScript : this.runtime.getRunningScripts()) {
             if (runningScript.getScript().getFile() != null) {

@@ -5,12 +5,8 @@ import net.matixmedia.macroscriptingmod.scripting.Runtime;
 import net.matixmedia.macroscriptingmod.scripting.Script;
 import net.matixmedia.macroscriptingmod.scripting.ScriptManager;
 import net.matixmedia.macroscriptingmod.utils.Chat;
-import org.checkerframework.checker.units.qual.C;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.luaj.vm2.LuaError;
-
-import java.io.IOException;
 
 public class CommandRun extends Command {
     private final Runtime runtime;
@@ -22,7 +18,7 @@ public class CommandRun extends Command {
     }
 
     @Override
-    public boolean execute(String[] args) {
+    public boolean execute(String[] args, boolean silent) {
         String scriptName = String.join(" ", args);
 
         Script script = this.scriptManager.loadScript(scriptName);
@@ -30,7 +26,7 @@ public class CommandRun extends Command {
             Chat.sendClientSystemMessage(Chat.Color.RED + "Script not found");
             return true;
         }
-        Chat.sendClientSystemMessage("Running \"" + scriptName + "\"...");
+        if (!silent) Chat.sendClientSystemMessage("Running \"" + scriptName + "\"...");
         try {
             this.runtime.execute(script);
         } catch (Exception e) {
