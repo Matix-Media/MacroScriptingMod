@@ -17,6 +17,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.ZeroArgFunction;
 
 import java.util.ArrayList;
@@ -262,6 +263,35 @@ public class LibPlayer extends Lib {
         public LuaValue call() {
             this.getMinecraft().inGameHud.getChatHud().clear(true);
             return null;
+        }
+    }
+
+    @AutoLibFunction
+    public static class Title extends LibArgFunction {
+        @Override
+        public Varargs invoke(Varargs args) {
+            if (this.getMinecraft().player == null) return null;
+            if (args.narg() > 0) {
+                Text title = Text.literal(args.arg1().checkjstring());
+                this.getMinecraft().inGameHud.setTitle(title);
+
+                if (args.narg() > 1 && args.arg(2).isstring()) {
+                    Text subtitle = Text.literal(args.arg(2).checkjstring());
+                    this.getMinecraft().inGameHud.setSubtitle(subtitle);
+                }
+
+                if (args.narg() == 1 || args.narg() == 2) {
+                    this.getMinecraft().inGameHud.setDefaultTitleFade();
+                } else if (args.narg() == 5) {
+                    int in = args.arg(3).checkint();
+                    int stay = args.arg(4).checkint();
+                    int out = args.arg(5).checkint();
+
+                    this.getMinecraft().inGameHud.setTitleTicks(in, stay, out);
+                }
+                return null;
+            }
+            return argerror("Invalid amount of arguments (valid is 1 or 4)");
         }
     }
 
