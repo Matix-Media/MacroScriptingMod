@@ -2,28 +2,50 @@ package net.matixmedia.macroscriptingmod.scripting;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class ScriptManager {
     private final Map<String, Script> scripts = new HashMap<>();
-    private final Path scriptsDir;
+    private final Path scriptsDirectory;
 
-    public ScriptManager(Path scriptsDir) {
-        this.scriptsDir = scriptsDir;
+    public ScriptManager(Path scriptsDirectory) {
+        this.scriptsDirectory = scriptsDirectory;
     }
 
 
     public Script loadScript(String scriptName) {
-        Path scriptPath = scriptsDir.resolve(scriptName);
-        if (scripts.containsKey(scriptPath.toString())) {
-            return scripts.get(scriptPath.toString());
-        } else {
-            File scriptFile = scriptPath.toFile();
-            if (!scriptFile.exists() || !scriptFile.isFile()) return null;
-            Script script = new Script(scriptFile);
-            scripts.put(scriptPath.toString(), script);
+        for (Script script : this.getAvailableScripts()) {
+            if (!script.getScriptName().equals(scriptName)) continue;
             return script;
         }
+        return null;
+    }
+
+    public Collection<Script> getAvailableScripts() {
+        File[] files = this.scriptsDirectory.toFile().listFiles();
+        if (files == null) return new ArrayList<>();
+
+        List<Script> availableScripts = new ArrayList<>();
+        List<Script> locatedScripts = new ArrayList<>();
+        for (File file : files) {
+            Script script;
+            if (scripts.containsKey(file.getPath())) {
+                script = scripts.get(file.getPath());
+            } else {
+                String scriptName = file.getPath().substring(this.scriptsDirectory.toString().length() + 1);
+                script = new Script(scriptName, file);
+                scripts.put(file.getPath(), script);
+            }
+            locatedScripts.add(script);
+            availableScripts.add(script);
+        }
+        for (Map.Entry<String, Script> entry : scripts.entrySet()) {
+            if (!locatedScripts.contains(entry.getValue())) scripts.remove(entry.getKey());
+        }
+        return availableScripts;
+    }
+
+    public Path getScriptsDirectory() {
+        return scriptsDirectory;
     }
 }

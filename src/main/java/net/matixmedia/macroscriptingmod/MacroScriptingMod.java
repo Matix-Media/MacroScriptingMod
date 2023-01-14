@@ -72,11 +72,13 @@ public class MacroScriptingMod implements ClientModInitializer, EventListener {
 
         this.commandManager = new CommandManager();
 
+        this.commandManager.registerCommand(new CommandHelp(this.commandManager, getChatPrefix()));
         this.commandManager.registerCommand(new CommandEval(this.runtime));
+        this.commandManager.registerCommand(new CommandScripts(this.scriptManager));
+        this.commandManager.registerCommand(new CommandScriptsDir(this.scriptManager));
         this.commandManager.registerCommand(new CommandRun(this.runtime, this.scriptManager));
         this.commandManager.registerCommand(new CommandStop(this.runtime));
         this.commandManager.registerCommand(new CommandRunning(this.runtime));
-        this.commandManager.registerCommand(new CommandHelp(this.commandManager, getChatPrefix()));
     }
 
     private void registerRuntime() {
