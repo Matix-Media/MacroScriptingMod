@@ -1,9 +1,6 @@
 package net.matixmedia.macroscriptingmod.scripting.libs;
 
-import net.matixmedia.macroscriptingmod.api.scripting.Lib;
-import net.matixmedia.macroscriptingmod.api.scripting.AutoLibFunction;
-import net.matixmedia.macroscriptingmod.api.scripting.LibTwoArgFunction;
-import net.matixmedia.macroscriptingmod.api.scripting.LibZeroArgFunction;
+import net.matixmedia.macroscriptingmod.api.scripting.*;
 import net.matixmedia.macroscriptingmod.eventsystem.EventHandler;
 import net.matixmedia.macroscriptingmod.eventsystem.EventListener;
 import net.matixmedia.macroscriptingmod.eventsystem.EventManager;
@@ -14,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.Varargs;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,9 +89,13 @@ public class LibEvents extends Lib implements EventListener {
         this.callEvent("on_tick", new LuaValue[0]);
     }
 
+    @EventHandler
+    public void onScriptCustomEvent(EventScriptCustomEvent event) {
+        this.callEvent(event.getEvent(), event.getArgs());
+    }
+
     public boolean callEvent(String event, LuaValue[] args) {
         boolean cancelEvent = false;
-
         try {
             for (EventListener listener : this.listeners) {
                 if (!listener.event.equals(event.toLowerCase())) continue;
@@ -117,8 +119,6 @@ public class LibEvents extends Lib implements EventListener {
                 }
             } else throw e;
         }
-
-
         return cancelEvent;
     }
 
@@ -130,7 +130,6 @@ public class LibEvents extends Lib implements EventListener {
             if (instance == null) return null;
 
             instance.useFunctionHandlers = true;
-            System.out.println("Using function handlers");
             return null;
         }
     }
@@ -146,6 +145,54 @@ public class LibEvents extends Lib implements EventListener {
             LuaValue handler = arg2.checkfunction();
 
             instance.listeners.add(new LibEvents.EventListener(eventName, handler));
+            return null;
+        }
+    }
+
+    @AutoLibFunction
+    public static class Send extends LibArgFunction {
+        @Override
+        public LuaValue call() {
+            invoke();
+            return null;
+        }
+
+        @Override
+        public LuaValue call(LuaValue arg) {
+            invoke(new LuaValue[]{arg});
+            return null;
+        }
+
+        @Override
+        public LuaValue call(LuaValue arg1, LuaValue arg2) {
+            invoke(new LuaValue[]{arg1, arg2});
+            return null;
+        }
+
+        @Override
+        public LuaValue call(LuaValue arg1, LuaValue arg2, LuaValue arg3) {
+            invoke(new LuaValue[]{arg1, arg2, arg3});
+            return null;
+        }
+
+        @Override
+        public LuaValue call(LuaValue arg1, LuaValue arg2, LuaValue arg3, LuaValue arg4) {
+            invoke(new LuaValue[]{arg1, arg2, arg3, arg4});
+            return null;
+        }
+
+        @Override
+        public Varargs invoke(Varargs args) {
+            if (args.narg() == 0) return argerror("Please specify an event name");
+
+            String eventName = args.arg1().checkjstring();
+            List<LuaValue> eventArguments = new ArrayList<>();
+
+            for (int i = 2; i < args.narg() + 1; i++) {
+                eventArguments.add(args.arg(i));
+            }
+
+            EventManager.fire(new EventScriptCustomEvent(eventName, eventArguments.toArray(new LuaValue[0])));
             return null;
         }
     }
