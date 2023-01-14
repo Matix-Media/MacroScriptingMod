@@ -4,6 +4,7 @@ import net.matixmedia.macroscriptingmod.eventsystem.EventHandler;
 import net.matixmedia.macroscriptingmod.eventsystem.EventListener;
 import net.matixmedia.macroscriptingmod.eventsystem.EventManager;
 import net.matixmedia.macroscriptingmod.eventsystem.events.EventChatMessage;
+import net.matixmedia.macroscriptingmod.utils.CLIParser;
 import net.matixmedia.macroscriptingmod.utils.Chat;
 
 import java.util.ArrayList;
@@ -32,11 +33,24 @@ public class CommandManager implements EventListener {
 
         boolean silent = event.getMessage().startsWith("...");
 
-        List<String> args = List.of(event.getMessage().substring(silent ? 3 : 1).split(" "));
+        String[] commandAndArgs = event.getMessage().substring(silent ? 3 : 1).split(" ", 2);
+        if (commandAndArgs.length < 1) {
+            Chat.sendClientSystemMessage(Chat.Color.RED + "Invalid command.");
+            return;
+        }
+        String commandName = commandAndArgs[0];
+        String rawArgs = commandAndArgs.length > 1 ? commandAndArgs[1] : "";
+        List<String> args;
+        try {
+            args = new CLIParser(rawArgs).getTokens();
+        } catch (Exception e) {
+            Chat.sendClientSystemMessage(Chat.Color.RED + e.getMessage());
+            return;
+        }
 
         Command executableCommand = null;
         for (Command command : this.registeredCommands) {
-            if (!command.getCommand().equalsIgnoreCase(args.get(0))) continue;
+            if (!command.getCommand().equalsIgnoreCase(commandName)) continue;
             executableCommand = command;
         }
 
@@ -45,12 +59,10 @@ public class CommandManager implements EventListener {
             return;
         }
 
-        String[] passedArgs;
-        if (args.size() > 1) passedArgs = args.subList(1, args.size()).toArray(new String[args.size() - 2]);
-        else passedArgs = new String[0];
+        boolean result = executableCommand.execute(
+                executableCommand.acceptsUnparsedArguments() ? new String[] {rawArgs} : args.toArray(new String[0]), silent);
 
-        boolean result = executableCommand.execute(passedArgs, silent);
-        if (!result) Chat.sendClientSystemMessage("Help: " + Chat.Color.AQUA + "." +
+        if (!result) Chat.sendClientSystemMessage(Chat.Color.RED + "Help: " + Chat.Color.AQUA + "." +
                 executableCommand.getCommand() + (executableCommand.getHelp() != null ? " " + executableCommand.getHelp() : ""));
     }
 }

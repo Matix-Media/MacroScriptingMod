@@ -11,4 +11,8 @@ public abstract class Command {
 
     @Nullable
     public abstract String getHelp();
+
+    public boolean acceptsUnparsedArguments() {
+        return false;
+    }
 }

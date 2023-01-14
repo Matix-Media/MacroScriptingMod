@@ -8,6 +8,8 @@ import net.matixmedia.macroscriptingmod.utils.Chat;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
+
 public class CommandRun extends Command {
     private final Runtime runtime;
     private final ScriptManager scriptManager;
@@ -19,8 +21,8 @@ public class CommandRun extends Command {
 
     @Override
     public boolean execute(String[] args, boolean silent) {
-        String scriptName = String.join(" ", args);
-
+        if (args.length < 1) return false;
+        String scriptName = args[0];
         Script script = this.scriptManager.loadScript(scriptName);
         if (script == null) {
             Chat.sendClientSystemMessage(Chat.Color.RED + "Script not found");
@@ -28,7 +30,7 @@ public class CommandRun extends Command {
         }
         if (!silent) Chat.sendClientSystemMessage("Running \"" + scriptName + "\"...");
         try {
-            this.runtime.execute(script);
+            this.runtime.execute(script, args.length > 1 ? Arrays.copyOfRange(args, 1, args.length) : new String[0]);
         } catch (Exception e) {
             Chat.sendClientSystemMessage(Chat.Color.RED + "Error executing lua script: " + e.getMessage());
         }
@@ -42,6 +44,6 @@ public class CommandRun extends Command {
 
     @Override
     public @Nullable String getHelp() {
-        return "<script name>";
+        return "<script name> [<script arguments>...]";
     }
 }

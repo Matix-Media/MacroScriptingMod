@@ -9,6 +9,9 @@ import net.matixmedia.macroscriptingmod.scripting.Script;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class LibScript extends Lib {
 
     public LibScript() {
@@ -88,6 +91,18 @@ public class LibScript extends Lib {
         @Override
         public LuaValue call() {
             return LuaValue.valueOf(this.getRunningScript().getUuid().toString());
+        }
+    }
+
+    @AutoLibFunction
+    public static class GetArguments extends LibZeroArgFunction {
+        @Override
+        public LuaValue call() {
+            List<LuaValue> arguments = new ArrayList<>();
+            for (String argument : this.getRunningScript().getArguments()) {
+                arguments.add(LuaValue.valueOf(argument));
+            }
+            return LuaValue.listOf(arguments.toArray(new LuaValue[0]));
         }
     }
 }

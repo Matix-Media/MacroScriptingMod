@@ -96,9 +96,13 @@ public class Runtime {
         return holder;
     }
 
-    public RunScriptResult execute(Script script) throws RuntimeException {
+    public RunScriptResult execute(Script script) {
+        return this.execute(script, new String[0]);
+    }
+
+    public RunScriptResult execute(Script script, String[] arguments) throws RuntimeException {
         InterruptDebugger interruptDebugger = new InterruptDebugger();
-        RunningScript runningScript = new RunningScript(script, Thread.currentThread(), interruptDebugger, this);
+        RunningScript runningScript = new RunningScript(script, arguments, Thread.currentThread(), interruptDebugger, this);
 
         return new RunScriptResult(runningScript, CompletableFuture.supplyAsync(() -> {
             LOGGER.info("Creating sandbox for " + runningScript.getUuid());

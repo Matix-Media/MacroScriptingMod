@@ -8,8 +8,10 @@ import org.luaj.vm2.LuaValue;
 import java.util.Date;
 import java.util.UUID;
 
+@SuppressWarnings("unused")
 public class RunningScript {
     private final Script script;
+    private final String[] arguments;
     private GlobalsHolder globalsHolder;
     private LuaValue chunk;
     private final Date startedAt;
@@ -18,9 +20,9 @@ public class RunningScript {
     private final InterruptDebugger interruptDebugger;
     private final Runtime runtime;
 
-    public RunningScript(Script script, Thread thread, InterruptDebugger interruptDebugger, Runtime runtime) {
+    public RunningScript(Script script, String[] arguments, Thread thread, InterruptDebugger interruptDebugger, Runtime runtime) {
         this.script = script;
-
+        this.arguments = arguments;
         this.startedAt = new Date();
         this.uuid = UUID.randomUUID();
         this.thread = thread;
@@ -47,14 +49,12 @@ public class RunningScript {
         this.chunk = chunk;
     }
 
-
-
     public Script getScript() {
         return script;
     }
 
-    public Date getStartedAt() {
-        return startedAt;
+    public String[] getArguments() {
+        return arguments;
     }
 
     public UUID getUuid() {
@@ -75,6 +75,10 @@ public class RunningScript {
 
     public LuaValue getChunk() {
         return chunk;
+    }
+
+    public Date getStartedAt() {
+        return startedAt;
     }
 
     public boolean isForceStopped() {

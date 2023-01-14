@@ -18,15 +18,13 @@ public class CommandEval extends Command {
     @Override
     public boolean execute(String[] args, boolean silent) {
         if (args.length < 1) return false;
-        String code = String.join(" ", args);
-
+        String code = args[0];
         if (!silent) Chat.sendClientSystemMessage("Evaluating lua code...");
         try {
             this.runtime.execute(new Script(code));
         } catch (RuntimeException e) {
             Chat.sendClientSystemMessage(Chat.Color.RED + "Error evaluating lua code: " + e.getMessage());
         }
-
         return true;
     }
 
@@ -38,5 +36,10 @@ public class CommandEval extends Command {
     @Override
     public @Nullable String getHelp() {
         return "<code>";
+    }
+
+    @Override
+    public boolean acceptsUnparsedArguments() {
+        return true;
     }
 }
