@@ -106,6 +106,8 @@ public class MacroScriptingMod implements ClientModInitializer, EventListener {
         this.runtime.addLibrary(LibEvents.class);
         this.runtime.addLibrary(LibSettings.class);
 
+        this.runtime.addLibraryFromResources("luascriptextensions/json.lua", "json");
+
         this.runtime.addLibrary(InterruptDebugger.class);
     }
 
