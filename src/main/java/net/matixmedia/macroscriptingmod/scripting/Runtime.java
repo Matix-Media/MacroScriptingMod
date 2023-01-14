@@ -13,9 +13,11 @@ import org.luaj.vm2.LoadState;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.compiler.LuaC;
-import org.luaj.vm2.lib.*;
+import org.luaj.vm2.lib.LibFunction;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
@@ -29,6 +31,7 @@ public class Runtime {
 
     private final PrintStream printStream;
     private final List<Class<? extends LibFunction>> libraries = new ArrayList<>();
+    private final List<LibraryFromResource> librariesFromResources = new ArrayList<>();
     private final List<RunningScript> runningScripts = new ArrayList<>();
 
     public Runtime() {
@@ -38,6 +41,10 @@ public class Runtime {
 
     public void addLibrary(Class<? extends LibFunction> lib) {
         this.libraries.add(lib);
+    }
+
+    public void addLibraryFromResources(String fileName, String libraryName) {
+        this.librariesFromResources.add(new LibraryFromResource(fileName, libraryName));
     }
 
     private GlobalsHolder createGlobals(RunningScript runningScript, InterruptDebugger interruptDebugger) {
@@ -67,9 +74,22 @@ public class Runtime {
         }
 
         globals.load(interruptDebugger);
-
         LoadState.install(globals);
         LuaC.install(globals);
+
+        for (LibraryFromResource lib : this.librariesFromResources) {
+            InputStream stream = getClass().getClassLoader().getResourceAsStream(lib.fileName);
+            if (stream == null) continue;
+            try {
+                LuaValue chunk = globals.load(stream, lib.libraryName, "bt", globals);
+                globals.get("package").get("preload").set(lib.libraryName, chunk);
+                chunk = globals.load(lib.libraryName + " = require(\"" + lib.libraryName + "\")");
+                chunk.call();
+            } catch (Exception e) {
+                LOGGER.error("Error loading resource: " + e.getMessage());
+                throw new RuntimeException(e);
+            }
+        }
 
         GlobalsHolder holder = new GlobalsHolder(globals, initiatedLibs);
         runningScript.setGlobalsHolder(holder);
@@ -89,17 +109,13 @@ public class Runtime {
             LOGGER.info("Successfully created sandbox");
 
             LuaValue chunk;
-            try {
-                chunk = globalsHolder.getGlobals().load(script.getContent(), script.getFile() != null ? script.getFile().getName() : "<LUA CODE>");
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            runningScript.setChunk(chunk);
             LuaValue result = LuaValue.NIL;
             RuntimeException exception = null;
             try {
+                chunk = globalsHolder.getGlobals().load(script.getContent(), script.getFile() != null ? script.getFile().getName() : "<LUA CODE>");
+                runningScript.setChunk(chunk);
                 result = chunk.call();
-            } catch (RuntimeException e) {
+            } catch (IOException | RuntimeException e) {
                 if (e instanceof LuaError luaError && luaError.getCause() != null && luaError.getCause() instanceof ScriptInterruptedException) {
                     LOGGER.info("Cause: " + luaError.getCause().getClass().getSimpleName());
                     LOGGER.info("Script got stopped");
@@ -109,7 +125,8 @@ public class Runtime {
                     if (e instanceof LuaError luaError && luaError.getCause() != null) LOGGER.error("Cause: " + e.getCause().getClass().getSimpleName());
                     Chat.sendClientSystemMessage(Chat.Color.RED + "Error executing lua script:\n" + e.getMessage());
                     e.printStackTrace();
-                    exception = e;
+                    if (e instanceof RuntimeException runtimeException) exception = runtimeException;
+                    else exception = new RuntimeException(e);
                 }
             }
             runningScript.requestStop();
@@ -145,15 +162,27 @@ public class Runtime {
         return returned;
     }
 
+    public static class LibraryFromResource {
+        private final String fileName;
+        private final String libraryName;
+
+        public LibraryFromResource(String fileName, String libraryName) {
+            this.fileName = fileName;
+            this.libraryName = libraryName;
+        }
+    }
+
+    @SuppressWarnings("ClassCanBeRecord")
     public static class RunScriptResult {
-        private CompletableFuture<LuaValue> result;
-        private RunningScript runningScript;
+        private final CompletableFuture<LuaValue> result;
+        private final RunningScript runningScript;
 
         public RunScriptResult(RunningScript runningScript, CompletableFuture<LuaValue> result) {
             this.runningScript = runningScript;
             this.result = result;
         }
 
+        @SuppressWarnings("unused")
         public CompletableFuture<LuaValue> getResult() {
             return result;
         }
