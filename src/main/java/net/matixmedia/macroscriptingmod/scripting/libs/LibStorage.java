@@ -27,7 +27,7 @@ public class LibStorage extends Lib {
                 switch (arg2.typename()) {
                     case "nil" -> storageManager.save(key, null);
                     case "boolean" -> storageManager.save(key, arg2.toboolean());
-                    case "number" -> storageManager.save(key, arg2.toint());
+                    case "number" -> storageManager.save(key, arg2.todouble());
                     case "string" -> storageManager.save(key, arg2.tojstring());
                     default -> {
                         return argerror(2, "Only nil, boolean, number and string are allowed to be stored");
