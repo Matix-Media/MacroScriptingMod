@@ -215,6 +215,14 @@ Slots are 0-based. Meaning that the first slot is 0, the second 1 and so on.
 player.select_hotbar_slot(4)
 ```
 
+### `get_selected_hotbar_slot()`
+
+Returns the hotbar slot, the player currently has selected.
+
+```lua title="example.lua"
+print(player.get_selected_hotbar_slot())
+```
+
 ### `get_yaw()`
 
 Returns the current player's HeadYaw.
@@ -314,3 +322,25 @@ Respawns the player if their currently dead.
 ```lua title="example.lua"
 player.respawn()
 ```
+
+### `clear_chat()`
+
+Clears the chat client side.
+
+```lua title="example.lua"
+player.clear_chat()
+```
+
+### `echo(text)`
+
+**Arguments:**
+
+- `text`: The text you want the player to echo.
+
+Sends a message in chat.
+
+:::caution
+
+This sends a message to the server. If you want to paste a client-side message in chat, use print().
+
+:::

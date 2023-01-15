@@ -1,6 +1,6 @@
 ---
 tags:
-    - Lib
+  - Lib
 ---
 
 # Script
@@ -15,7 +15,7 @@ The scripts library provides functions to interact with other scripts.
 
 **Arguments:**
 
--   `script`: the name of the script to be run
+- `script`: the name of the script to be run
 
 Runs a script in a new context.
 
@@ -29,7 +29,7 @@ local script_id = script.run("my_script.lua")
 
 **Arguments:**
 
--   `id`: the ID of the script to be stopped
+- `id`: the ID of the script to be stopped
 
 Stops a running script.
 
@@ -41,14 +41,14 @@ script.stop(script_id)
 
 ### `get_running_scripts()`
 
-Returns a list of all currently running scripts.
+Returns a map of all currently running scripts.
 
-The list contains the IDs of all the running scripts.
+The map contains the IDs as the key and the corresponding file name as the value.
 
 ```lua title="example.lua"
 local running_scripts = script.get_running_scripts()
 
-for _, script in pairs(running_scripts) do
-    print("Script with ID " .. script .. " is running")
+for id, file in pairs(running_scripts) do
+    print(id .. ": " .. file)
 end
 ```

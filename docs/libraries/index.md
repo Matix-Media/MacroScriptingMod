@@ -14,7 +14,7 @@ require("library_name")
 
 ## Provided libraries
 
-To import a provided library, simply use the name of the library like listed but in lowercase, e.g: [Player](./player) -> `require("player")`.
+Provided libraries do not need to be imported manually.
 
 ## User defined libraries
 

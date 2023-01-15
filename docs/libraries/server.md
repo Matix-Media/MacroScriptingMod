@@ -25,6 +25,14 @@ You need to be disconnected in order to use this function.
 server.reconnect()
 ```
 
+### `disconnect()`
+
+Disconnects the player from the current server.
+
+```lua title="example.lua"
+server.disconnect()
+```
+
 ### `get_online_players()`
 
 Returns a list of currently connected players.
