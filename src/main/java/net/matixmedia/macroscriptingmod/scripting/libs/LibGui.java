@@ -176,9 +176,10 @@ public class LibGui extends Lib implements EventListener {
                     if (mc.player == null) return null;
                     instance.screenToSet = new InventoryScreen(mc.player);
                 }
+                default -> {
+                    return argerror(1, "The specified screen is either not available or unknown");
+                }
             }
-
-            System.out.println("Target Screen: " + instance.screenToSet.getClass().getSimpleName());
 
             return null;
         }
