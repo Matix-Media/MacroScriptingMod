@@ -1,12 +1,11 @@
 package net.matixmedia.macroscriptingmod.scripting.libs;
 
-import net.matixmedia.macroscriptingmod.api.scripting.AutoLibFunction;
-import net.matixmedia.macroscriptingmod.api.scripting.Lib;
-import net.matixmedia.macroscriptingmod.api.scripting.LibOneArgFunction;
-import net.matixmedia.macroscriptingmod.api.scripting.LibZeroArgFunction;
+import net.matixmedia.macroscriptingmod.api.scripting.*;
 import net.matixmedia.macroscriptingmod.utils.Chat;
 import org.luaj.vm2.LuaValue;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class LibText extends Lib {
@@ -20,6 +19,20 @@ public class LibText extends Lib {
         public LuaValue call(LuaValue arg) {
             String input = arg.checkjstring();
             return LuaValue.valueOf(input.trim());
+        }
+    }
+
+    @AutoLibFunction
+    public static class Split extends LibTwoArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg1, LuaValue arg2) {
+            String value = arg1.checkjstring();
+            String delimiter = arg2.checkjstring();
+            List<LuaValue> parts = new ArrayList<>();
+            for (String part : value.split(delimiter)) {
+                parts.add(LuaValue.valueOf(part));
+            }
+            return LuaValue.listOf(parts.toArray(new LuaValue[0]));
         }
     }
 
