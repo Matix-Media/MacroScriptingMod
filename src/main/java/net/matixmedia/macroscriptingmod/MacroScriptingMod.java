@@ -12,15 +12,18 @@ import net.matixmedia.macroscriptingmod.exceptions.InitializationException;
 import net.matixmedia.macroscriptingmod.scripting.InterruptDebugger;
 import net.matixmedia.macroscriptingmod.scripting.Runtime;
 import net.matixmedia.macroscriptingmod.scripting.ScriptManager;
+import net.matixmedia.macroscriptingmod.scripting.helpers.StorageManager;
 import net.matixmedia.macroscriptingmod.scripting.libs.*;
 import net.matixmedia.macroscriptingmod.utils.Chat;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ServerInfo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.luaj.vm2.Globals;
 import org.luaj.vm2.lib.*;
-import org.luaj.vm2.lib.jse.*;
+import org.luaj.vm2.lib.jse.JseBaseLib;
+import org.luaj.vm2.lib.jse.JseIoLib;
+import org.luaj.vm2.lib.jse.JseMathLib;
+import org.luaj.vm2.lib.jse.JseOsLib;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -30,6 +33,10 @@ import java.nio.file.Path;
 public class MacroScriptingMod implements ClientModInitializer, EventListener {
     private static final Logger LOGGER = LogManager.getLogger("MacroScripting");
     private static MacroScriptingMod INSTANCE;
+
+    public MacroScriptingMod() {
+    }
+
     public static String getChatPrefix() {
         return Chat.Color.BLUE + "[" + Chat.Color.GRAY + "MacroScriptingMod" + Chat.Color.BLUE + "] " + Chat.Color.GRAY;
     }
@@ -37,10 +44,8 @@ public class MacroScriptingMod implements ClientModInitializer, EventListener {
         return INSTANCE;
     }
 
-    private CommandManager commandManager;
     private ScriptManager scriptManager;
-    private Path scriptsDir;
-    private Globals luaGlobals;
+    private StorageManager storageManager;
     private Runtime runtime;
     private ServerInfo lastServer;
 
@@ -55,14 +60,17 @@ public class MacroScriptingMod implements ClientModInitializer, EventListener {
         INSTANCE = this;
 
         LOGGER.info("Checking scripts directory");
-        scriptsDir = MinecraftClient.getInstance().runDirectory.toPath().normalize().resolve("scripts");
+        Path configDir = MinecraftClient.getInstance().runDirectory.toPath().normalize().resolve("config/macroscriptingmod");
+        Path scriptsDir = MinecraftClient.getInstance().runDirectory.toPath().normalize().resolve("scripts");
         try {
+            Files.createDirectories(configDir);
             Files.createDirectories(scriptsDir);
         } catch (IOException exception) {
             throw new InitializationException("Could not create scripts directory", exception);
         }
 
-        this.scriptManager = new ScriptManager(this.scriptsDir);
+        this.scriptManager = new ScriptManager(scriptsDir);
+        this.storageManager = new StorageManager(configDir.resolve("storage.json"));
         this.registerRuntime();
         this.registerCommands();
     }
@@ -70,15 +78,15 @@ public class MacroScriptingMod implements ClientModInitializer, EventListener {
     private void registerCommands() {
         LOGGER.info("Registering commands");
 
-        this.commandManager = new CommandManager();
+        CommandManager commandManager = new CommandManager();
 
-        this.commandManager.registerCommand(new CommandHelp(this.commandManager, getChatPrefix()));
-        this.commandManager.registerCommand(new CommandEval(this.runtime));
-        this.commandManager.registerCommand(new CommandScripts(this.scriptManager));
-        this.commandManager.registerCommand(new CommandScriptsDir(this.scriptManager));
-        this.commandManager.registerCommand(new CommandRun(this.runtime, this.scriptManager));
-        this.commandManager.registerCommand(new CommandStop(this.runtime));
-        this.commandManager.registerCommand(new CommandRunning(this.runtime));
+        commandManager.registerCommand(new CommandHelp(commandManager, getChatPrefix()));
+        commandManager.registerCommand(new CommandEval(this.runtime));
+        commandManager.registerCommand(new CommandScripts(this.scriptManager));
+        commandManager.registerCommand(new CommandScriptsDir(this.scriptManager));
+        commandManager.registerCommand(new CommandRun(this.runtime, this.scriptManager));
+        commandManager.registerCommand(new CommandStop(this.runtime));
+        commandManager.registerCommand(new CommandRunning(this.runtime));
     }
 
     private void registerRuntime() {
@@ -105,6 +113,7 @@ public class MacroScriptingMod implements ClientModInitializer, EventListener {
         this.runtime.addLibrary(LibHttp.class);
         this.runtime.addLibrary(LibEvents.class);
         this.runtime.addLibrary(LibSettings.class);
+        this.runtime.addLibrary(LibStorage.class);
 
         this.runtime.addLibraryFromResources("luascriptextensions/json.lua", "json");
 
@@ -128,7 +137,7 @@ public class MacroScriptingMod implements ClientModInitializer, EventListener {
         return runtime;
     }
 
-    public CommandManager getCommandManager() {
-        return commandManager;
+    public StorageManager getStorageManager() {
+        return storageManager;
     }
 }
