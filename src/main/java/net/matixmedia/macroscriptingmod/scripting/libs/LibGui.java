@@ -1,9 +1,6 @@
 package net.matixmedia.macroscriptingmod.scripting.libs;
 
-import net.matixmedia.macroscriptingmod.api.scripting.AutoLibFunction;
-import net.matixmedia.macroscriptingmod.api.scripting.Lib;
-import net.matixmedia.macroscriptingmod.api.scripting.LibOneArgFunction;
-import net.matixmedia.macroscriptingmod.api.scripting.LibZeroArgFunction;
+import net.matixmedia.macroscriptingmod.api.scripting.*;
 import net.matixmedia.macroscriptingmod.api.scripting.objects.ObjItem;
 import net.matixmedia.macroscriptingmod.eventsystem.EventHandler;
 import net.matixmedia.macroscriptingmod.eventsystem.EventListener;
@@ -21,9 +18,10 @@ import net.minecraft.client.gui.screen.world.CreateWorldScreen;
 import net.minecraft.client.gui.screen.world.EditGameRulesScreen;
 import net.minecraft.client.gui.screen.world.EditWorldScreen;
 import net.minecraft.client.gui.screen.world.OptimizeWorldScreen;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ItemStack;
+import net.minecraft.screen.slot.Slot;
+import net.minecraft.screen.slot.SlotActionType;
 import org.luaj.vm2.LuaValue;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -213,15 +211,11 @@ public class LibGui extends Lib implements EventListener {
     public static class FindItem extends LibOneArgFunction {
         @Override
         public LuaValue call(LuaValue arg) {
-            MinecraftClient mc = MinecraftClient.getInstance();
-            if (!(mc.currentScreen instanceof GenericContainerScreen)) return NIL;
-
+            if (this.getMinecraft().player == null) return NIL;
             ItemSearch search = new ItemSearch(arg.checkjstring());
-            Inventory inventory = ((GenericContainerScreen) mc.currentScreen).getScreenHandler().getInventory();
 
-            for (int i = 0; i < inventory.size(); i++) {
-                ItemStack slot = inventory.getStack(i);
-                if (search.matches(slot)) return LuaValue.valueOf(i);
+            for (Slot slot : this.getMinecraft().player.currentScreenHandler.slots) {
+                if (search.matches(slot.getStack())) return LuaValue.valueOf(slot.id);
             }
 
             return NIL;
@@ -232,12 +226,57 @@ public class LibGui extends Lib implements EventListener {
     public static class GetItem extends LibOneArgFunction {
         @Override
         public LuaValue call(LuaValue arg) {
-            MinecraftClient mc = MinecraftClient.getInstance();
-            if (!(mc.currentScreen instanceof GenericContainerScreen)) return NIL;
+            if (this.getMinecraft().player == null) return NIL;
             int slot = arg.checkint();
-            Inventory inventory = ((GenericContainerScreen) mc.currentScreen).getScreenHandler().getInventory();
 
-            return new ObjItem(inventory.getStack(slot)).toLua();
+            return new ObjItem(this.getMinecraft().player.currentScreenHandler.slots.get(slot).getStack()).toLua();
+        }
+    }
+
+    @AutoLibFunction
+    public static class ClickSlot extends LibArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg) {
+            int slot = arg.checkint();
+            this.clickSlot(slot, false, GLFW.GLFW_MOUSE_BUTTON_LEFT);
+            return null;
+        }
+
+        @Override
+        public LuaValue call(LuaValue arg1, LuaValue arg2) {
+            int slot = arg1.checkint();
+            boolean shift = arg2.checkboolean();
+            this.clickSlot(slot, shift, GLFW.GLFW_MOUSE_BUTTON_LEFT);
+            return null;
+        }
+
+        @Override
+        public LuaValue call(LuaValue arg1, LuaValue arg2, LuaValue arg3) {
+            int slot = arg1.checkint();
+            boolean shift = arg2.checkboolean();
+            String buttonName = arg3.checkjstring();
+            int button;
+            switch (buttonName) {
+                case "LEFT" -> button = GLFW.GLFW_MOUSE_BUTTON_LEFT;
+                case "RIGHT" -> button = GLFW.GLFW_MOUSE_BUTTON_RIGHT;
+                case "MIDDLE" -> button = GLFW.GLFW_MOUSE_BUTTON_MIDDLE;
+                default -> {
+                    return argerror(3, "Mouse button must either be LEFT, RIGHT or MIDDLE");
+                }
+            }
+            this.clickSlot(slot, shift, button);
+            return null;
+        }
+
+        private void clickSlot(int slot, boolean shift, int button) {
+            if (this.getMinecraft().player == null || this.getMinecraft().interactionManager == null || this.getMinecraft().currentScreen == null) return;
+            SlotActionType actionType = SlotActionType.PICKUP;
+
+            if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT || button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
+                actionType = shift ? SlotActionType.QUICK_MOVE : SlotActionType.PICKUP;
+            } else if (button == GLFW.GLFW_MOUSE_BUTTON_MIDDLE) actionType = SlotActionType.CLONE;
+
+            this.getMinecraft().interactionManager.clickSlot(this.getMinecraft().player.currentScreenHandler.syncId, slot, button, actionType, this.getMinecraft().player);
         }
     }
 }

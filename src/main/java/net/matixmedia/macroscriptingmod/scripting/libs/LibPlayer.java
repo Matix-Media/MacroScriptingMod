@@ -2,14 +2,11 @@ package net.matixmedia.macroscriptingmod.scripting.libs;
 
 import net.matixmedia.macroscriptingmod.api.scripting.*;
 import net.matixmedia.macroscriptingmod.api.scripting.objects.ObjGameMode;
-import net.matixmedia.macroscriptingmod.api.scripting.objects.ObjItem;
 import net.matixmedia.macroscriptingmod.api.scripting.objects.ObjLocation;
 import net.matixmedia.macroscriptingmod.api.scripting.objects.ObjPlayer;
-import net.matixmedia.macroscriptingmod.scripting.helpers.ItemSearch;
 import net.matixmedia.macroscriptingmod.utils.Chat;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.PlayerListEntry;
-import net.minecraft.item.ItemStack;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.scoreboard.ScoreboardPlayerScore;
 import net.minecraft.text.MutableText;
@@ -173,38 +170,6 @@ public class LibPlayer extends Lib {
             double z = arg3.checkdouble();
 
             return LuaValue.valueOf(this.getMinecraft().player.getEyePos().distanceTo(new Vec3d(x, y, z)));
-        }
-    }
-
-    @AutoLibFunction
-    public static class FindItem extends LibOneArgFunction {
-        @Override
-        public LuaValue call(LuaValue arg) {
-            MinecraftClient mc = MinecraftClient.getInstance();
-            if (mc.player == null) return NIL;
-
-            ItemSearch search = new ItemSearch(arg.checkjstring());
-            List<ItemStack> inventory = mc.player.getInventory().main;
-
-            for (int i = 0; i < inventory.size(); i++) {
-                ItemStack slot = inventory.get(i);
-                if (search.matches(slot)) return LuaValue.valueOf(i);
-            }
-
-            return NIL;
-        }
-    }
-
-    @AutoLibFunction
-    public static class GetItem extends LibOneArgFunction {
-        @Override
-        public LuaValue call(LuaValue arg) {
-            MinecraftClient mc = MinecraftClient.getInstance();
-            if (mc.player == null) return NIL;
-            int slot = arg.checkint();
-            List<ItemStack> inventory = mc.player.getInventory().main;
-
-            return new ObjItem(inventory.get(slot)).toLua();
         }
     }
 
