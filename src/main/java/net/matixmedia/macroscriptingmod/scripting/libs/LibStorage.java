@@ -62,6 +62,17 @@ public class LibStorage extends Lib {
     }
 
     @AutoLibFunction
+    public static class Exists extends LibOneArgFunction {
+        @Override
+        public LuaValue call(LuaValue arg) {
+            StorageManager storageManager = MacroScriptingMod.getInstance().getStorageManager();
+
+            String key = arg.checkjstring();
+            return LuaValue.valueOf(storageManager.exists(key));
+        }
+    }
+
+    @AutoLibFunction
     public static class Delete extends LibOneArgFunction {
         @Override
         public LuaValue call(LuaValue arg) {
