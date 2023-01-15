@@ -215,7 +215,12 @@ public class LibPlayer extends Lib {
             if (this.getMinecraft().player == null) return null;
 
             String message = arg.checkjstring();
-            this.getMinecraft().player.sendChatMessage(message, null);
+            if (message.trim().startsWith("/")) {
+                this.getMinecraft().player.sendCommand(message.trim().substring(1));
+            }else {
+                this.getMinecraft().player.sendChatMessage(message, null);
+            }
+
 
             return null;
         }
