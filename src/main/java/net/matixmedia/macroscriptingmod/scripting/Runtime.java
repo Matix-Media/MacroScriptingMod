@@ -36,7 +36,7 @@ public class Runtime {
 
     public Runtime() {
         RealTimeOutputStream outputStream = new RealTimeOutputStream(Chat::sendClientMessage);
-        this.printStream = new PrintStream(outputStream, true, StandardCharsets.US_ASCII);
+        this.printStream = new PrintStream(outputStream, true, StandardCharsets.ISO_8859_1);
     }
 
     public void addLibrary(Class<? extends LibFunction> lib) {
