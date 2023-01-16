@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkmacroscriptingmod_docs=self.webpackChunkmacroscriptingmod_docs||[]).push([[121],{8070:t=>{t.exports=JSON.parse('[{"label":"Getting started","permalink":"/MacroScriptingMod/docs/tags/getting-started","count":1},{"label":"Lib","permalink":"/MacroScriptingMod/docs/tags/lib","count":8}]')}}]);
