@@ -156,7 +156,7 @@ public class LibGui extends Lib implements EventListener {
     }
 
     @AutoLibFunction
-    public static class GetCurrentGuiName extends LibZeroArgFunction {
+    public static class GetCurrentGuiTitle extends LibZeroArgFunction {
         @Override
         public LuaValue call() {
             if (this.getMinecraft().currentScreen == null) return NIL;
