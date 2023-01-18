@@ -280,4 +280,20 @@ public class LibGui extends Lib implements EventListener {
             this.getMinecraft().interactionManager.clickSlot(this.getMinecraft().player.currentScreenHandler.syncId, slot, button, actionType, this.getMinecraft().player);
         }
     }
+
+    @AutoLibFunction
+    public static class GetCurrentGuiName extends LibZeroArgFunction {
+        @Override
+        public LuaValue call() {
+
+            MinecraftClient mc = MinecraftClient.getInstance();
+            Screen currentScreen = mc.currentScreen;
+
+            if (currentScreen == null) return null;
+
+            if (currentScreen.getTitle() == null) return null;
+
+            return LuaValue.valueOf(currentScreen.getTitle().getString());
+        }
+    }
 }
